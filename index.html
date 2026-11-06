@@ -27,7 +27,7 @@
 </head>
 <body><main class="app">
 <header><div><h1>🏋️ 健身日历</h1></div><div class="headerBtns"><button class="today" id="todayBtn">今天</button><div class="menuWrap"><button class="themeBtn" id="menuBtn" aria-label="打开功能菜单" aria-expanded="false" aria-controls="appMenu">☰</button><div class="appMenu" id="appMenu" hidden><div class="menuCloud"><div class="menuTitle">☁️ 云端同步</div><div class="menuStatus" id="syncStatus" role="status">未登录 · 记录仅保存在本机</div><div class="menuTime" id="syncTime"></div><div class="cloudActions"><button class="secondary" id="loginBtn">Google 登录</button><button class="secondary" id="logoutBtn" hidden>退出</button><button class="secondary" id="syncBtn" hidden>立即同步</button></div></div><button class="menuItem" id="themeBtn">🎨 配色</button><button class="menuItem" id="export">导出备份</button><button class="menuItem" id="import">导入备份</button><input id="file" type="file" accept="application/json,.json" hidden/></div></div></div></header>
-<section class="summary" aria-live="polite"><div><div class="summaryTitle">🏅 开始健身已经：</div><div class="summaryValue" id="stats">0.0 周 · 0 天</div><div class="summaryNote" id="statsRange">尚无已完成的打卡</div></div><div class="viewBtns" role="group" aria-label="日历显示模式"><button class="viewBtn active" id="monthView" aria-pressed="true">月历</button><button class="viewBtn" id="listView" aria-pressed="false">列表</button></div></section>
+<section class="summary" aria-live="polite"><div><div class="summaryTitle">🏅 开始健身已经：</div><div class="summaryValue" id="stats">0.0 月 · 0.0 周 · 0 天</div><div class="summaryNote" id="statsRange">尚无已完成的打卡</div></div><div class="viewBtns" role="group" aria-label="日历显示模式"><button class="viewBtn active" id="monthView" aria-pressed="true">月历</button><button class="viewBtn" id="listView" aria-pressed="false">列表</button></div></section>
 
 <div class="controls"><button class="nav" id="prev" aria-label="上个月">‹</button><div class="month" id="month"></div><button class="nav" id="next" aria-label="下个月">›</button></div>
 <div id="calendar" class="calendar"></div>
@@ -71,7 +71,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));}catch(e){
 function updateStats(){
  const completed=Object.keys(entries).filter(id=>/^\d{4}-\d{2}-\d{2}$/.test(id)&&validType(entries[id]?.type)&&entries[id].done).sort();
  const days=completed.length;
- el('stats').textContent=`${(days/7).toFixed(1)} 周 · ${days} 天`;
+ el('stats').textContent=`${(days/30).toFixed(1)} 月 · ${(days/7).toFixed(1)} 周 · ${days} 天`;
  el('statsRange').textContent=days?`首次：${completed[0]}　最新：${completed[days-1]}`:'尚无已完成的打卡';
 }
 function setView(mode){viewMode=mode;try{localStorage.setItem(VIEW_KEY,mode)}catch(e){}render();notifyChange('view')}
