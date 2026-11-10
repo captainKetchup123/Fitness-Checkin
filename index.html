@@ -1,13 +1,11 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<link rel="apple-touch-icon" href="icon.png">
-<link rel="icon" type="image/png" href="icon.png?v=3">
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#101114"/>
+<meta name="theme-color" content="#f7f5ee"/>
 <title>健身日历</title>
 <style>
-:root{color-scheme:dark;--bg:#101114;--card:#1c1e22;--border:#32353b;--text:#f5f5f7;--muted:#999ba3;--yellow:#f0cf55;--green:#78c79b;--buttonText:#171717;--surface:#25272c;--picker:#23252a;--pickbg:#282a2e;--pickText:#bfc0c4}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:850px;margin:auto;padding:24px 16px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px}h1{font-size:26px;margin:0}header p{color:var(--muted);margin:6px 0 0;font-size:13px}button{font:inherit;cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}.controls{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px}.nav{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:12px;min-width:43px;height:42px;font-size:20px}.month{font-size:20px;font-weight:700}.today{background:var(--yellow);border:0;border-radius:12px;padding:10px 14px;font-weight:700;color:var(--buttonText)}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.weekday{text-align:center;color:var(--muted);font-size:13px;padding:9px 0 12px}.day{background:var(--card);border:1px solid var(--border);border-radius:13px;min-height:110px;padding:8px;display:flex;flex-direction:column;gap:7px;min-width:0}.day.empty{background:transparent;border-color:transparent}.day.current{border-color:var(--yellow)}.number{font-weight:700;font-size:15px}.number em{font-size:9px;font-style:normal;color:var(--buttonText);background:var(--yellow);padding:2px 4px;border-radius:4px;margin-left:3px}.pick{width:100%;min-width:0;min-height:36px;border:1px dashed var(--border);border-radius:9px;background:var(--pickbg);color:var(--pickText);font-size:12px;padding:4px 3px;text-align:center;white-space:normal;overflow-wrap:anywhere}.pick.selected{background:var(--pickbg);border:1px solid var(--yellow);color:var(--yellow);font-weight:650}.check{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);cursor:pointer;margin-top:auto}.check input{appearance:none;width:17px;height:17px;border:1.5px solid var(--muted);border-radius:50%;margin:0;flex-shrink:0}.check input:checked{background:var(--yellow);border-color:var(--yellow)}.check input:checked:after{content:'✓';display:block;text-align:center;color:var(--buttonText);font-size:12px;font-weight:800;line-height:14px}.check.disabled{opacity:.35;pointer-events:none}.legend{color:var(--muted);font-size:13px;line-height:1.65;margin:18px 0}.actions{display:flex;gap:9px;flex-wrap:wrap}.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 13px}.panel{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;z-index:20;padding:12px}.panel.show{display:flex}.sheet{background:var(--picker);border:1px solid var(--border);border-radius:20px;width:min(460px,100%);padding:20px 14px calc(18px + env(safe-area-inset-bottom));box-shadow:0 8px 40px #0009}.sheet h2{font-size:18px;margin:0 0 16px;padding:0 7px}.option{width:100%;padding:16px 14px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);margin-bottom:8px;font-size:16px}.option.active{border-color:var(--yellow);color:var(--yellow)}.customBox{padding:12px 4px 5px;border-top:1px solid var(--border);margin-top:7px}.customInput{display:block;width:100%;margin:8px 0 10px;padding:13px 12px;background:var(--pickbg);color:var(--text);border:1px solid var(--border);border-radius:10px;font:inherit;font-size:16px}.customSave{border-color:var(--yellow);color:var(--yellow);text-align:center}.sheet{max-height:85dvh;overflow-y:auto}.cancel{margin-top:6px;width:100%;padding:13px;color:var(--muted);background:transparent;border:0}.hint{font-size:13px;color:var(--muted)}@media(max-width:600px){.app{padding:20px 9px 60px}.calendar{gap:4px}.day{padding:5px 3px;min-height:99px;border-radius:9px;gap:5px}.number{font-size:13px;padding-left:3px}.pick{font-size:10px;min-height:38px;padding:3px 1px;border-radius:7px;line-height:1.25}.check{justify-content:center;font-size:10px;gap:2px}.check input{width:15px;height:15px}.check input:checked:after{line-height:12px;font-size:11px}h1{font-size:24px}}@media(max-width:365px){.calendar{gap:3px}.pick{font-size:9px}.day{padding:4px 2px}}
+:root{color-scheme:light;--bg:#f7f5ee;--card:#ffffff;--border:#dedbd0;--text:#242424;--muted:#73736c;--yellow:#feab23;--green:#78c79b;--buttonText:#151515;--surface:#eeece4;--picker:#ffffff;--pickbg:#f7f3e7;--pickText:#4c4c4c}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.app{max-width:850px;margin:auto;padding:24px 16px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 20px}h1{font-size:26px;margin:0}header p{color:var(--muted);margin:6px 0 0;font-size:13px}button{font:inherit;cursor:pointer}button:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:3px}.controls{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:16px}.nav{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:12px;min-width:43px;height:42px;font-size:20px}.month{font-size:20px;font-weight:700}.today{background:var(--yellow);border:0;border-radius:12px;padding:10px 14px;font-weight:700;color:var(--buttonText)}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.weekday{text-align:center;color:var(--muted);font-size:13px;padding:9px 0 12px}.day{background:var(--card);border:1px solid var(--border);border-radius:13px;min-height:110px;padding:8px;display:flex;flex-direction:column;gap:7px;min-width:0}.day.empty{background:transparent;border-color:transparent}.day.current{border-color:var(--yellow)}.number{font-weight:700;font-size:15px}.number em{font-size:9px;font-style:normal;color:var(--buttonText);background:var(--yellow);padding:2px 4px;border-radius:4px;margin-left:3px}.pick{width:100%;min-width:0;min-height:36px;border:1px dashed var(--border);border-radius:9px;background:var(--pickbg);color:var(--pickText);font-size:12px;padding:4px 3px;text-align:center;white-space:normal;overflow-wrap:anywhere}.pick.selected{background:var(--pickbg);border:1px solid var(--yellow);color:var(--yellow);font-weight:650}.pick.restDay{background:var(--pickbg);border:1px solid #d8d4c8;color:var(--pickText);font-weight:650}.check{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);cursor:pointer;margin-top:auto}.check input{appearance:none;width:17px;height:17px;border:1.5px solid var(--muted);border-radius:50%;margin:0;flex-shrink:0}.check input:checked{background:var(--yellow);border-color:var(--yellow)}.check input:checked:after{content:'✓';display:block;text-align:center;color:var(--buttonText);font-size:12px;font-weight:800;line-height:14px}.check.disabled{opacity:.35;pointer-events:none}.legend{color:var(--muted);font-size:13px;line-height:1.65;margin:18px 0}.actions{display:flex;gap:9px;flex-wrap:wrap}.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:10px;padding:10px 13px}.panel{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;z-index:20;padding:12px}.panel.show{display:flex}.sheet{background:var(--picker);border:1px solid var(--border);border-radius:20px;width:min(460px,100%);padding:20px 14px calc(18px + env(safe-area-inset-bottom));box-shadow:0 8px 40px #0009}.sheet h2{font-size:18px;margin:0 0 16px;padding:0 7px}.option{width:100%;padding:16px 14px;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);margin-bottom:8px;font-size:16px}.option.active{border-color:var(--yellow);color:var(--yellow)}.customBox{padding:12px 4px 5px;border-top:1px solid var(--border);margin-top:7px}.customInput{display:block;width:100%;margin:8px 0 10px;padding:13px 12px;background:var(--pickbg);color:var(--text);border:1px solid var(--border);border-radius:10px;font:inherit;font-size:16px}.customSave{border-color:var(--yellow);color:var(--yellow);text-align:center}.sheet{max-height:85dvh;overflow-y:auto}.cancel{padding:13px;color:var(--muted);background:transparent;border:0}.pickerFooter{display:flex;align-items:stretch;gap:8px;margin-top:6px}.pickerFooter .cancel{flex:1;min-width:0}.hint{font-size:13px;color:var(--muted)}@media(max-width:600px){.app{padding:20px 9px 60px}.calendar{gap:4px}.day{padding:5px 3px;min-height:99px;border-radius:9px;gap:5px}.number{font-size:13px;padding-left:3px}.number em{display:inline-block}.pick{font-size:10px;min-height:38px;padding:3px 1px;border-radius:7px;line-height:1.25}.check{justify-content:center;font-size:10px;gap:2px}.check input{width:15px;height:15px}.check input:checked:after{line-height:12px;font-size:11px}h1{font-size:24px}}@media(max-width:365px){.calendar{gap:3px}.pick{font-size:9px}.day{padding:4px 2px}}
 
 /* 统计与视图切换 */
 .day:not(.empty){min-height:82px}.calendar.listMode .day{min-height:58px}
@@ -29,31 +27,205 @@
 .menuWrap{position:relative}.appMenu[hidden]{display:none!important}.appMenu{position:absolute;top:calc(100% + 9px);right:0;width:min(330px,calc(100vw - 28px));max-height:min(75dvh,580px);overflow:auto;background:var(--picker);border:1px solid var(--border);border-radius:15px;z-index:30;box-shadow:0 16px 40px #0007;padding:10px}.menuCloud{padding:10px 9px 13px;border-bottom:1px solid var(--border);margin-bottom:5px}.menuTitle{font-size:16px;font-weight:750;margin-bottom:8px}.menuStatus{font-size:12px;color:var(--muted);overflow-wrap:anywhere}.menuTime{font-size:11px;color:var(--muted);margin-top:5px}.menuCloud .cloudActions{margin-top:11px;display:flex;flex-wrap:wrap;gap:7px}.menuCloud .cloudActions button{padding:9px 11px;font-size:13px}.menuItem{display:block;width:100%;background:transparent;color:var(--text);border:0;border-radius:9px;text-align:left;padding:14px 10px;font-size:15px}.menuItem:active,.menuItem:hover{background:var(--surface)}
 
 /* 训练项目排序：触控长按手柄，桌面拖动 */
-.pickerHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 4px 10px}.pickerHead .secondary{padding:8px 10px;font-size:13px}.pickerHead h2{margin:0}.sortInfo{font-size:12px;color:var(--muted);padding:0 8px 10px}.sortRow{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}.sortRow .option{margin:0;flex:1;min-width:0}.sortHandle{touch-action:none;user-select:none;-webkit-user-select:none;width:54px;flex-shrink:0;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:23px;cursor:grab}.sortHandle:active{cursor:grabbing}.removeTraining{width:44px;flex-shrink:0;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:#ff7777;font-size:21px}.confirmRemove,.cancelRemove{width:auto;padding:0 9px;font-size:12px;white-space:nowrap}.confirmRemove{color:#ff7777}.removeTraining[hidden]{display:none}.restoreBox{border-top:1px solid var(--border);padding:12px 5px;margin-top:10px}.restoreItem{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:14px}.restoreItem button{padding:8px 12px}.sortRow.dragging{opacity:.48}.sortRow.dropTarget .option,.sortRow.dropTarget .sortHandle{border-color:var(--yellow)}
+.pickerHead{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 4px 10px}.pickerHead .secondary{padding:8px 10px;font-size:13px}.pickerHead h2{margin:0}.sortInfo{font-size:12px;color:var(--muted);padding:0 8px 10px}.sortRow{display:flex;align-items:stretch;gap:6px;margin-bottom:8px}.sortRow .option{margin:0;flex:1;min-width:0}.sortHandle{touch-action:none;user-select:none;-webkit-user-select:none;width:54px;flex-shrink:0;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:23px;cursor:grab}.sortHandle:active{cursor:grabbing}.removeTraining{width:44px;flex-shrink:0;border:1px solid var(--border);border-radius:11px;background:var(--surface);color:#ff7777;font-size:21px}.confirmRemove,.cancelRemove{width:auto;padding:0 9px;font-size:12px;white-space:nowrap}.confirmRemove{color:#ff7777}.removeTraining[hidden]{display:none}.sortRow.dragging{opacity:.48}.sortRow.dropTarget .option,.sortRow.dropTarget .sortHandle{border-color:var(--yellow)}
+
+/* 节日与日期在同一行；中文节日红色、意大利语节日蓝色 */
+.dateHeading{display:flex;align-items:center;gap:4px;min-width:0;width:100%}
+.dateHeading>.number{flex-shrink:0}
+.holidayLabels{display:flex;align-items:center;flex-wrap:wrap;gap:2px 4px;min-width:0;flex:1;padding-top:0}
+.holidayLabel{font-size:10px;line-height:1.25;font-weight:600;overflow-wrap:anywhere;min-width:0}
+.holidayLabel.cn{color:#d73737}
+.holidayLabel.it{color:#2375ce}
+.listMode .dateHeading{width:170px;flex-shrink:0}
+.listMode .dateHeading>.number{width:auto}
+.listMode .holidayLabels{padding-top:1px}
+.listMode .holidayLabel{font-size:11px}
+/* 列表模式：日期数字与节日文字中线对齐 */
+.listMode .dateHeading{align-items:center}
+.listMode .dateHeading>.number{line-height:1.25}
+.listMode .holidayLabels{align-items:center;padding-top:0}
+.listMode .holidayLabel{line-height:1.25}
+@media(max-width:600px){.dateHeading{gap:2px}.holidayLabels{gap:1px 2px;padding-top:0;align-items:center}.holidayLabel{font-size:9px;line-height:1.2}.listMode .dateHeading{width:135px;align-items:center}.listMode .holidayLabels{padding-top:0;align-items:center}.listMode .holidayLabel{font-size:10px}}
+@media(max-width:365px){.holidayLabel{font-size:8px}.listMode .dateHeading{width:115px}}
+/* 底部导航与体重记录 */
+[hidden]{display:none!important}
+.app{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+.bottomNav{position:fixed;z-index:18;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border)}
+.bottomNavInner{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(850px,100%)}
+.tabBtn{border:0;border-radius:13px;background:transparent;color:var(--muted);padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13px;font-weight:650}
+.tabBtn .tabIcon{width:24px;height:24px;display:block;color:currentColor}.tabBtn .tabIcon svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.tabBtn.active{background:var(--surface);color:var(--yellow)}
+.weightPage{display:flex;flex-direction:column;gap:16px}
+.weightCard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+.weightCard h2{font-size:19px;margin:0 0 8px}.weightSub{color:var(--muted);font-size:13px;margin:0 0 18px}
+.weightInputs{display:grid;grid-template-columns:1fr 1fr;gap:12px}.weightField{display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--muted);min-width:0}
+.weightField input{width:100%;min-width:0;min-height:46px;background:var(--pickbg);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:10px 12px;font:inherit;font-size:16px;color-scheme:inherit}
+.weightSave{width:100%;margin-top:14px;min-height:46px;border:0;border-radius:11px;background:var(--yellow);color:var(--buttonText);font-weight:750}
+.weightError{margin-top:10px;color:#c63e35;font-size:13px;min-height:0}.weightError:empty{display:none}.weightError.success{color:#398663}
+.weightEmpty{font-size:14px;color:var(--muted);padding:22px 0;text-align:center}
+.weightRow{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid var(--border);padding:13px 0}
+.weightRow:last-child{border-bottom:0;padding-bottom:0}.weightDate{font-size:13px;color:var(--muted)}.weightValue{font-size:19px;font-weight:700;margin-top:3px}
+.weightRowActions{display:flex;gap:7px}.weightRowActions button{border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);padding:8px 12px}
+.weightRowActions button.deleteWeight{color:#c44b43}
+.weightPagination{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border)}
+.weightPagination button{border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);padding:9px 13px;font-size:13px}.weightPagination button:disabled{opacity:.35;cursor:default}.weightPagination span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+@media(max-width:370px){.weightPagination{gap:9px}.weightPagination button{padding:8px 9px}}
+.weightSummary{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:14px;color:var(--muted);font-size:13px}.weightSummary strong{display:block;font-size:23px;color:var(--yellow);margin-top:4px}
+@media(max-width:460px){.weightInputs{grid-template-columns:1fr}.weightCard{padding:15px}}
+/* 体重日期：自定义主题日历，避免浏览器的地区格式差异 */
+.dateDisplay{width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;padding:10px 12px;background:var(--pickbg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px}
+.dateDisplay svg{width:19px;height:19px;flex-shrink:0;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dateBackdrop{position:fixed;inset:0;z-index:45;background:#0008;display:flex;align-items:center;justify-content:center;padding:18px}
+.datePickerCard{width:min(380px,100%);background:var(--picker);border:1px solid var(--border);border-radius:20px;box-shadow:0 18px 60px #0004;padding:18px;color:var(--text)}
+.datePickerHeader{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:17px}.datePickerTitle{font-size:17px;font-weight:750;white-space:nowrap}
+.datePickerArrows{display:flex;gap:4px}.datePickerArrows button{min-width:32px;height:34px;border:0;background:var(--surface);color:var(--text);border-radius:9px;font-size:19px;transition:background-color .18s ease,transform .18s ease}.datePickerArrows button:active{transform:scale(.92)}
+.datePickerGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;min-height:290px;will-change:transform,opacity}.datePickerTitle{will-change:transform,opacity}.dateWeekday{text-align:center;color:var(--muted);font-size:12px;padding:6px 0 8px}
+.dateCell{aspect-ratio:1;min-height:36px;border:0;border-radius:11px;background:transparent;color:var(--text);font-size:14px;display:flex;align-items:center;justify-content:center}.dateCell:not(:disabled):hover{background:var(--surface)}
+.dateCell:disabled{opacity:.3;cursor:default}.dateCell.isToday{box-shadow:inset 0 0 0 1.5px var(--yellow)}.dateCell.isSelected{background:var(--yellow);color:var(--buttonText);font-weight:800;box-shadow:none}
+/* 单层分阶段切换，避免旧月份和新月份重叠 */
+.dateGridStage{position:relative;overflow:hidden;min-height:290px}
+/* 固定星期标题 + 六周网格，所有月份弹窗高度保持一致 */
+.dateGridStage{height:338px;min-height:338px}
+.dateGridStage .datePickerGrid{height:338px;min-height:338px;grid-template-rows:28px repeat(6,minmax(0,1fr));align-items:stretch}
+.dateGridStage .datePickerGrid .dateCell{aspect-ratio:auto;min-height:0;width:100%;height:100%}
+.dateGridStage .datePickerGrid .dateWeekday{align-self:center;padding:0}
+
+@keyframes dateSlideOutNext{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-24px)}}
+@keyframes dateSlideInNext{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes dateSlideOutPrev{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(24px)}}
+@keyframes dateSlideInPrev{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+@keyframes dateTodayPulse{0%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(.97)}100%{opacity:1;transform:scale(1)}}
+.dateGridStage .datePickerGrid.outNext{animation:dateSlideOutNext .19s ease-in forwards}
+.dateGridStage .datePickerGrid.outPrev{animation:dateSlideOutPrev .19s ease-in forwards}
+.dateGridStage .datePickerGrid.inNext{animation:dateSlideInNext .25s ease-out both}
+.dateGridStage .datePickerGrid.inPrev{animation:dateSlideInPrev .25s ease-out both}
+.dateGridStage .datePickerGrid.todayPulse{animation:dateTodayPulse .4s ease-in-out both}
+.datePickerTitle.switching{animation:dateTodayPulse .44s ease-in-out both}
+.datePickerFooter{display:flex;justify-content:space-between;gap:10px;margin-top:17px;padding-top:12px;border-top:1px solid var(--border)}.datePickerFooter button{padding:10px 15px;border:0;background:var(--surface);color:var(--text);border-radius:10px;font-size:14px}.datePickerFooter #dateToday{background:var(--yellow);color:var(--buttonText);font-weight:700}
+@media(max-width:390px){.datePickerCard{padding:14px}.datePickerArrows button{min-width:28px}.datePickerGrid{gap:3px}.dateCell{min-height:32px}}
+
+/* 主日历：左右两组年月导航，双箭头切换年份 */
+.monthNavGroup{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.controls>.month{flex:1;text-align:center;min-width:0}
+.monthNavGroup .nav{display:inline-flex;align-items:center;justify-content:center;min-width:42px;width:42px;height:42px;line-height:1}
+@media(max-width:600px){.monthNavGroup{gap:3px}.monthNavGroup .nav{min-width:32px;width:32px;height:36px;font-size:19px}.controls{gap:4px}.controls>.month{font-size:16px}}
+@media(max-width:365px){.monthNavGroup .nav{min-width:29px;width:29px}.controls>.month{font-size:14px}}
+/* 主日历：与体重日期选择器相同的单层分阶段滑动，避免重影 */
+#calendar{will-change:transform,opacity}
+#calendar.outNext{animation:dateSlideOutNext .19s ease-in forwards}
+#calendar.outPrev{animation:dateSlideOutPrev .19s ease-in forwards}
+#calendar.inNext{animation:dateSlideInNext .25s ease-out both}
+#calendar.inPrev{animation:dateSlideInPrev .25s ease-out both}
+#calendar.todayPulse{animation:dateTodayPulse .4s ease-in-out both}
+.controls>.month.switching{animation:dateTodayPulse .44s ease-in-out both}
+
+.addTraining{text-align:center;font-size:30px;font-weight:500;color:var(--text);line-height:1.2}.addTrainingForm{padding:7px 3px 10px}.addTrainingForm .customInput{margin:0 0 8px}.addTrainingActions{display:flex;gap:8px}.addTrainingActions button{flex:1}.addTrainingSave{border-color:var(--yellow);color:var(--yellow)}
+
+/* 左滑：卡片与右侧独立图标联动，跟手展开，松手柔和吸附 */
+.swipeRow{--swipe-reveal:0px;--swipe-progress:0;display:flex;align-items:stretch;gap:0;position:relative;overflow:hidden;margin-bottom:8px;min-height:76px;background:transparent}
+.swipeRow.revealed,.swipeRow.confirming{--swipe-reveal:152px;--swipe-progress:1}
+.swipeRow .swipeFront{order:0;position:relative;z-index:2;margin:0;min-height:76px;display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;width:0;padding:0 18px;text-align:center;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.swipeActions{order:1;position:relative;z-index:1;display:flex;align-items:stretch;flex:0 0 var(--swipe-reveal);width:var(--swipe-reveal);min-width:0;gap:calc(8px * var(--swipe-progress));padding-left:calc(8px * var(--swipe-progress));box-sizing:border-box;overflow:hidden}
+.swipeActions,.swipeRow .swipeFront{transition:flex-basis .42s cubic-bezier(.22,1,.36,1),width .42s cubic-bezier(.22,1,.36,1),gap .42s cubic-bezier(.22,1,.36,1),padding-left .42s cubic-bezier(.22,1,.36,1)}
+.swipeRow.swipeTracking .swipeActions,.swipeRow.swipeTracking .swipeFront{transition:none}
+.swipeActions button{border:1px solid var(--border);background:var(--surface);border-radius:13px;color:var(--text);cursor:pointer;flex:1 1 0;min-width:0;padding:0;display:flex;align-items:center;justify-content:center;transform:scale(calc(.84 + var(--swipe-progress) * .16));transform-origin:right center;opacity:var(--swipe-progress);transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s cubic-bezier(.22,1,.36,1)}
+.swipeRow.swipeTracking .swipeActions button{transition:none}
+.swipeActions button svg{width:25px;height:25px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.swipeActions .swipeMove{color:var(--text)}.swipeActions .swipeDelete{color:#ff6969}
+.swipeActions .swipeConfirm{color:#ff6969;font-size:12px}.swipeActions .swipeCancel{color:var(--text);font-size:12px}
+/* 拖动排序：浮动卡片跟手，空位实时挤开附近项目 */
+.dragPlaceholder{height:76px;margin-bottom:8px;border:2px dashed var(--yellow);border-radius:13px;background:var(--pickbg);box-sizing:border-box}
+.dragGhost{position:fixed;z-index:1000;pointer-events:none;margin:0!important;box-sizing:border-box;box-shadow:0 12px 32px #0002;opacity:.96;transform:scale(1.015);transform-origin:center center;will-change:top}
+.swipeRow.dragSource{position:absolute!important;visibility:hidden!important;pointer-events:none!important;max-height:0!important;min-height:0!important;height:0!important;margin:0!important;padding:0!important;overflow:hidden!important}
+.swipeActions .swipeMove{touch-action:none;user-select:none;-webkit-user-select:none}
+@media(prefers-reduced-motion:reduce){.dragGhost{transition:none!important}}
+
+/* 长按项目名称后原位编辑，点击其他位置自动保存 */
+.trainingEditFront{gap:0;padding:8px!important}
+.trainingEditInput{flex:1;min-width:0;height:48px;background:var(--pickbg);border:1px solid var(--border);border-radius:10px;color:var(--text);font:inherit;font-size:16px;text-align:center;padding:0 8px;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
+/* 一个日期选择多个项目时，每个项目独占一行，日期高度自动延展。 */
+.pick.multiSelected{white-space:pre-line;line-height:1.45;min-height:44px;padding:7px 3px;overflow-wrap:anywhere}
+.calendar.listMode .pick.multiSelected{white-space:pre-line}
+
+/* v56：体重趋势，使用实际日期间距和保形平滑曲线 */
+.trendHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.trendHeader h2{margin:0}.trendChange{font-size:13px;font-weight:700;color:var(--muted)}
+.trendRanges{display:flex;gap:5px;margin:16px 0 10px;overflow-x:auto;scrollbar-width:none}
+.trendRanges::-webkit-scrollbar{display:none}
+.trendRange{flex:1;min-width:49px;white-space:nowrap;padding:8px 6px;border:1px solid transparent;border-radius:10px;background:var(--surface);color:var(--muted);font-size:12px;font-weight:600}
+.trendRange.active{border-color:var(--yellow);background:var(--pickbg);color:var(--text)}
+.trendGraph{width:100%;min-height:190px;position:relative}
+.trendGraph svg{display:block;width:100%;height:auto;overflow:visible;touch-action:pan-y}
+.trendGraph .trendGrid{stroke:var(--border);stroke-width:1;stroke-dasharray:3 6}
+.trendGraph .trendText{fill:var(--muted);font-size:11px;font-family:inherit}
+.trendGraph .trendLine{fill:none;stroke:var(--yellow);stroke-width:3.4;stroke-linecap:round;stroke-linejoin:round}
+.trendGraph .trendDot{fill:var(--yellow);stroke:var(--card);stroke-width:2.3;pointer-events:none}
+.trendGraph .trendHit{fill:transparent;cursor:pointer;outline:none}
+.trendGraph .trendHit:focus-visible{stroke:var(--yellow);stroke-width:2;fill:rgba(254,171,35,.08)}
+.trendGraph .trendSelected{fill:var(--yellow);stroke:var(--text);stroke-width:2.2;pointer-events:none}
+.trendDetail{min-height:20px;color:var(--text);font-size:13px;font-weight:600;text-align:center;margin-top:5px}
+.trendEmpty{display:flex;align-items:center;justify-content:center;height:190px;color:var(--muted);font-size:14px;text-align:center;padding:12px}
+@media(max-width:420px){.trendRange{font-size:11px;padding:8px 4px}.trendGraph{min-height:165px}}
 </style>
 </head>
 <body><main class="app">
 <header><div><h1>🏋️ 健身日历</h1></div><div class="headerBtns"><button class="today" id="todayBtn">今天</button><div class="menuWrap"><button class="themeBtn" id="menuBtn" aria-label="打开功能菜单" aria-expanded="false" aria-controls="appMenu">☰</button><div class="appMenu" id="appMenu" hidden><div class="menuCloud"><div class="menuTitle">☁️ 云端同步</div><div class="menuStatus" id="syncStatus" role="status">未登录 · 记录仅保存在本机</div><div class="menuTime" id="syncTime"></div><div class="cloudActions"><button class="secondary" id="loginBtn">Google 登录</button><button class="secondary" id="logoutBtn" hidden>退出</button><button class="secondary" id="syncBtn" hidden>立即同步</button></div></div><button class="menuItem" id="themeBtn">🎨 配色</button><button class="menuItem" id="export">导出备份</button><button class="menuItem" id="import">导入备份</button><input id="file" type="file" accept="application/json,.json" hidden/></div></div></div></header>
-<section class="summary" aria-live="polite"><div><div class="summaryTitle">🏅 开始健身已经：</div><div class="summaryValue" id="stats">0.0 月 · 0.0 周 · 0 天</div><div class="summaryNote" id="statsRange">尚无已完成的打卡</div></div><div class="viewBtns" role="group" aria-label="日历显示模式"><button class="viewBtn active" id="monthView" aria-pressed="true">月历</button><button class="viewBtn" id="listView" aria-pressed="false">列表</button></div></section>
+<div id="calendarPage"><section class="summary" aria-live="polite"><div><div class="summaryTitle">🏅 开始健身已经：</div><div class="summaryValue" id="stats">0.0 月 · 0.0 周 · 0 天</div><div class="summaryNote" id="statsRange">尚无已完成的打卡</div></div><div class="viewBtns" role="group" aria-label="日历显示模式"><button class="viewBtn active" id="monthView" aria-pressed="true">月历</button><button class="viewBtn" id="listView" aria-pressed="false">列表</button></div></section>
 
-<div class="controls"><button class="nav" id="prev" aria-label="上个月">‹</button><div class="month" id="month"></div><button class="nav" id="next" aria-label="下个月">›</button></div>
-<div id="calendar" class="calendar"></div>
+<div class="controls"><div class="monthNavGroup"><button class="nav" id="prevYear" aria-label="上一年" title="上一年">«</button><button class="nav" id="prev" aria-label="上个月" title="上个月">‹</button></div><div class="month" id="month"></div><div class="monthNavGroup"><button class="nav" id="next" aria-label="下个月" title="下个月">›</button><button class="nav" id="nextYear" aria-label="下一年" title="下一年">»</button></div></div>
+<div id="calendar" class="calendar"></div></div>
+<section id="weightPage" class="weightPage" hidden aria-label="体重记录">
+  <div class="weightCard weightTrendCard">
+    <div class="trendHeader"><h2>体重趋势</h2><div class="trendChange" id="trendChange" aria-live="polite"></div></div>
+    <div class="trendRanges" id="trendRanges" role="group" aria-label="体重趋势时间范围">
+      <button type="button" class="trendRange active" data-range="1" aria-pressed="true">1个月</button>
+      <button type="button" class="trendRange" data-range="3" aria-pressed="false">3个月</button>
+      <button type="button" class="trendRange" data-range="6" aria-pressed="false">6个月</button>
+      <button type="button" class="trendRange" data-range="12" aria-pressed="false">1年</button>
+      <button type="button" class="trendRange" data-range="all" aria-pressed="false">全部</button>
+    </div>
+    <div id="trendGraph" class="trendGraph" aria-label="按日期显示体重变化的曲线图"></div>
+    <div class="trendDetail" id="trendDetail" role="status">点击数据点查看日期与体重</div>
+  </div>
+  <div class="weightCard">
+    <h2>体重记录</h2><p class="weightSub">选择日期，记录当天的体重（kg）</p>
+    <form id="weightForm" novalidate>
+      <div class="weightInputs">
+        <div class="weightField"><label for="weightDateBtn">日期</label><input id="weightDate" type="hidden"/><button id="weightDateBtn" class="dateDisplay" type="button" aria-haspopup="dialog" aria-controls="dateDialog"><span id="weightDateText">请选择日期</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"/></svg></button></div>
+        <label class="weightField">体重（kg）<input id="weightAmount" type="number" inputmode="decimal" step="0.1" min="1" max="500" placeholder="例如 65.5" required/></label>
+      </div>
+      <button class="weightSave" type="submit">保存体重</button>
+      <div id="weightError" class="weightError" role="status"></div>
+    </form>
+  </div>
+  <div class="weightCard"><h2>体重历史</h2><div id="weightSummary" class="weightSummary"></div><div id="weightHistory"></div><nav id="weightPagination" class="weightPagination" aria-label="体重历史分页" hidden><button type="button" id="weightPrevPage" aria-label="上一页">‹ 上一页</button><span id="weightPageInfo" aria-live="polite"></span><button type="button" id="weightNextPage" aria-label="下一页">下一页 ›</button></nav></div>
+</section>
 
 </main>
-<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="sheet"><div class="pickerHead"><h2 id="dialogTitle">选择训练</h2><button class="secondary" id="sortBtn">⇅</button></div><div id="sortInfo" class="sortInfo" hidden>按住右侧 ☰ 并拖动，即可调整项目顺序。</div><div id="options"></div><button class="cancel" id="cancel">取消</button></div></div>
+<nav class="bottomNav" aria-label="底部导航"><div class="bottomNavInner">
+<button type="button" class="tabBtn active" id="tabCalendar" aria-current="page"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M7.5 3.5v3"></path><path d="M16.5 3.5v3"></path><path d="M3.5 9.5h17"></path><path d="M8 13h.01"></path><path d="M12 13h.01"></path><path d="M16 13h.01"></path><path d="M8 17h.01"></path><path d="M12 17h.01"></path></svg></span>日历</button>
+<button type="button" class="tabBtn" id="tabWeight"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 5.5h11a2 2 0 0 1 2 2v9a2.5 2.5 0 0 1-2.5 2.5h-10A2.5 2.5 0 0 1 4.5 16.5v-9a2 2 0 0 1 2-2Z"></path><path d="M8 9.5a4 4 0 0 1 8 0"></path><path d="M12 9.5l1.8-1.3"></path><path d="M9 14.5h6"></path></svg></span>体重</button>
+</div></nav>
+<div id="dateDialog" class="dateBackdrop" hidden role="dialog" aria-modal="true" aria-label="选择体重记录日期"><div class="datePickerCard">
+ <div class="datePickerHeader"><div class="datePickerTitle" id="datePickerTitle"></div><div class="datePickerArrows"><button id="datePrevYear" type="button" aria-label="上一年">«</button><button id="datePrev" type="button" aria-label="上个月">‹</button><button id="dateNext" type="button" aria-label="下个月">›</button><button id="dateNextYear" type="button" aria-label="下一年">»</button></div></div>
+ <div class="dateGridStage" id="dateGridStage"><div class="datePickerGrid" id="datePickerGrid"></div></div><div class="datePickerFooter"><button id="dateToday" type="button">今天</button><button id="dateClose" type="button">取消</button></div>
+ </div></div>
+<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="sheet"><div class="pickerHead"><h2 id="dialogTitle">选择训练</h2></div><div id="options"></div><div class="pickerFooter"><button class="cancel" id="cancel">完成</button></div></div></div>
 <div class="panel" id="themePanel" role="dialog" aria-modal="true" aria-labelledby="themeTitle"><div class="sheet themeSheet"><h2 id="themeTitle">🎨 自定义颜色</h2><p class="themeIntro">选择预设主题，或点颜色方块逐项调整。修改立即生效并自动保存。</p><div class="themePresets" id="presets"></div><div id="colorRows"></div><div class="themeActions"><button class="secondary" id="resetTheme">恢复默认</button><button class="secondary" id="closeTheme">完成</button></div><p class="themeNote">登录 Google 后配色也会同步到云端；JSON 备份同时包含配色。</p></div></div>
+
 <script>
 'use strict';
 const KEY='fitness-calendar-v1';
 const THEME_KEY='fitness-calendar-theme-v1';
 const VIEW_KEY='fitness-calendar-view-v1';
+const WEIGHT_KEY='fitness-calendar-weights-v1';
 const notifyChange=(type)=>window.dispatchEvent(new CustomEvent('fitness-change',{detail:{type}}));
-const DEFAULT_THEME={bg:'#101114',card:'#1c1e22',border:'#32353b',text:'#f5f5f7',muted:'#999ba3',yellow:'#f0cf55',buttonText:'#171717',surface:'#25272c',picker:'#23252a',pickbg:'#282a2e',pickText:'#bfc0c4'};
+const CLASSIC_THEME={bg:'#101114',card:'#1c1e22',border:'#32353b',text:'#f5f5f7',muted:'#999ba3',yellow:'#f0cf55',buttonText:'#171717',surface:'#25272c',picker:'#23252a',pickbg:'#282a2e',pickText:'#bfc0c4'};
+const DEFAULT_THEME={...CLASSIC_THEME,bg:'#f7f5ee',card:'#ffffff',border:'#dedbd0',text:'#242424',muted:'#73736c',yellow:'#feab23',buttonText:'#151515',surface:'#eeece4',picker:'#ffffff',pickbg:'#f7f3e7',pickText:'#4c4c4c'};
 const PRESETS={
- '经典深色':DEFAULT_THEME,
- '苹果黑金':{...DEFAULT_THEME,bg:'#000000',card:'#191919',border:'#373737',yellow:'#ffd60a',surface:'#242424',picker:'#1c1c1e',pickbg:'#282828'},
- '奶油浅色':{...DEFAULT_THEME,bg:'#f7f5ee',card:'#ffffff',border:'#dedbd0',text:'#242424',muted:'#73736c',yellow:'#d5a72d',buttonText:'#151515',surface:'#eeece4',picker:'#ffffff',pickbg:'#f7f3e7',pickText:'#4c4c4c'},
- '深海蓝':{...DEFAULT_THEME,bg:'#0b1726',card:'#172b41',border:'#304963',text:'#eff7ff',muted:'#a3b9ce',yellow:'#54b8ff',surface:'#1e3a55',picker:'#152a41',pickbg:'#203c58',pickText:'#d6eaff'}
+ '经典深色':CLASSIC_THEME,
+ '苹果黑金':{...CLASSIC_THEME,bg:'#000000',card:'#191919',border:'#373737',yellow:'#ffd60a',surface:'#242424',picker:'#1c1c1e',pickbg:'#282828'},
+ '奶油浅色':DEFAULT_THEME,
+ '深海蓝':{...CLASSIC_THEME,bg:'#0b1726',card:'#172b41',border:'#304963',text:'#eff7ff',muted:'#a3b9ce',yellow:'#54b8ff',surface:'#1e3a55',picker:'#152a41',pickbg:'#203c58',pickText:'#d6eaff'}
 };
 const COLOR_FIELDS=[['bg','页面背景'],['card','日期卡片'],['text','主要文字'],['muted','次要文字'],['yellow','按钮与勾选'],['surface','普通按钮'],['pickbg','训练选择背景'],['pickText','训练选择文字'],['border','边框'],['picker','弹窗背景'],['buttonText','强调按钮文字']];
 const isHex=v=>typeof v==='string'&&/^#[0-9a-fA-F]{6}$/.test(v);
@@ -73,20 +245,337 @@ let hiddenTraining=(()=>{try{const x=JSON.parse(localStorage.getItem(HIDDEN_KEY)
 function saveHidden(){try{localStorage.setItem(HIDDEN_KEY,JSON.stringify(hiddenTraining))}catch(e){console.warn('隐藏设置保存失败',e)}notifyChange('order')}
 function cleanOrder(list){if(!Array.isArray(list))return [...TYPES];const out=[];for(const x of list)if(typeof x==='string'&&x.trim()&&x.length<=60&&!out.includes(x))out.push(x);for(const x of TYPES)if(!out.includes(x))out.push(x);return out.slice(0,150)}
 let trainingOrder=(()=>{try{return cleanOrder(JSON.parse(localStorage.getItem(ORDER_KEY)))}catch{return [...TYPES]}})();
-let sortMode=false;
+let openedTrainingRow=null;
+let movingTrainingRow=null;
 function saveOrder(){try{localStorage.setItem(ORDER_KEY,JSON.stringify(trainingOrder))}catch(e){console.warn('排序保存失败',e)}notifyChange('order')}
 function registerCustom(type){if(hiddenTraining.includes(type)){hiddenTraining=hiddenTraining.filter(t=>t!==type);saveHidden()}if(!trainingOrder.includes(type)){trainingOrder.push(type);saveOrder()}}
 function orderedTypes(){return cleanOrder(trainingOrder).filter(t=>!hiddenTraining.includes(t))}
 const validType=t=>typeof t==='string'&&t.trim().length>0&&t.length<=60;
+// 同一日期可保存多个训练项目，兼容旧版 {type,done} 数据。
+function entryTypes(entry){
+ if(!entry||typeof entry!=='object')return [];
+ const raw=Array.isArray(entry.types)?entry.types:(validType(entry.type)?[entry.type]:[]);
+ return [...new Set(raw.filter(validType))].slice(0,50);
+}
+function normalEntry(entry){
+ const types=entryTypes(entry);
+ return types.length?{type:types[0],types,done:true}:null;
+}
 let entries={};
-try{let raw=JSON.parse(localStorage.getItem(KEY)||'{}');if(raw && typeof raw==='object' && !Array.isArray(raw))entries=raw;}catch(e){console.warn('读取记录失败',e)}
+try{let raw=JSON.parse(localStorage.getItem(KEY)||'{}');if(raw&&typeof raw==='object'&&!Array.isArray(raw)){for(const [d,v] of Object.entries(raw)){const item=normalEntry(v);if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&item)entries[d]=item;}}}catch(e){console.warn('读取记录失败',e)}
+let weights={};
+function validWeight(x){const n=Number(x);return x!==null&&x!==''&&Number.isFinite(n)&&n>=1&&n<=500&&Math.round(n*10)===n*10}
+function cleanWeights(obj){const out={};if(!obj||typeof obj!=='object'||Array.isArray(obj))return out;for(const [d,v] of Object.entries(obj)){if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&!Number.isNaN(Date.parse(d+'T00:00:00'))&&validWeight(v))out[d]=Number(v)}return out}
+try{weights=cleanWeights(JSON.parse(localStorage.getItem(WEIGHT_KEY)||'{}'))}catch(e){console.warn('读取体重记录失败',e)}
+function saveWeights(){try{localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights))}catch(e){console.error('体重记录保存失败',e);alert('体重记录保存失败，请检查浏览器存储或存储空间');return false}try{notifyChange('weights')}catch(e){console.error('体重已本地保存，但同步队列更新失败',e);const status=document.getElementById('syncStatus');if(status)status.textContent='🟠 体重已保存本地，云同步暂未完成'}return true}
 const now=new Date();let year=now.getFullYear(),month=now.getMonth(),editing=null;
 let viewMode=localStorage.getItem(VIEW_KEY)==='list'?'list':'month';
 const el=id=>document.getElementById(id);
 const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+let trendRange='1';
+let trendSelectedDate=null;
+function renderWeightChart(){
+ const graph=document.getElementById('trendGraph'),detail=document.getElementById('trendDetail'),change=document.getElementById('trendChange');
+ if(!graph)return;
+ graph.replaceChildren();
+ const today=new Date(),todayUTC=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());
+ let cutoff=-Infinity;
+ if(trendRange!=='all'){
+  const first=new Date(today.getFullYear(),today.getMonth()-Number(trendRange),1);
+  const day=Math.min(today.getDate(),new Date(first.getFullYear(),first.getMonth()+1,0).getDate());
+  cutoff=Date.UTC(first.getFullYear(),first.getMonth(),day);
+ }
+ const data=Object.entries(weights).map(([date,value])=>({date,value,ts:Date.parse(date+'T00:00:00Z')}))
+  .filter(p=>Number.isFinite(p.ts)&&p.ts>=cutoff&&p.ts<=todayUTC).sort((a,b)=>a.ts-b.ts);
+ if(!data.length){
+  const empty=document.createElement('div');empty.className='trendEmpty';empty.textContent='所选时间段内暂无体重记录';graph.append(empty);
+  change.textContent='';detail.textContent='添加体重后会自动显示趋势';return;
+ }
+ const difference=data[data.length-1].value-data[0].value;
+ change.textContent=data.length>1?`变化 ${difference>0?'+':''}${difference.toFixed(1)} kg`:'1 条记录';
+ const W=760,H=270,L=46,R=15,T=18,B=39,pw=W-L-R,ph=H-T-B;
+ const minVal=Math.min(...data.map(p=>p.value)),maxVal=Math.max(...data.map(p=>p.value));
+ const pad=Math.max(0.5,(maxVal-minVal)*0.22);
+ const ymin=minVal-pad,ymax=maxVal+pad;
+ const xmin=data[0].ts,xmax=data[data.length-1].ts;
+ const x=ts=>data.length===1?L+pw/2:L+(ts-xmin)/(xmax-xmin)*pw;
+ const y=v=>T+(ymax-v)/(ymax-ymin)*ph;
+ const ns='http://www.w3.org/2000/svg';
+ const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.setAttribute('role','img');svg.setAttribute('aria-label','体重变化曲线图，点击记录点查看数值');
+ const add=(parent,tag,attrs={},label)=>{const node=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs))node.setAttribute(k,String(v));if(label!==undefined)node.textContent=label;parent.append(node);return node};
+ const defs=add(svg,'defs');const gradient=add(defs,'linearGradient',{id:'weightTrendFill',x1:'0',y1:'0',x2:'0',y2:'1'});
+ add(gradient,'stop',{offset:'0%','stop-color':'var(--yellow)','stop-opacity':'.22'});add(gradient,'stop',{offset:'100%','stop-color':'var(--yellow)','stop-opacity':'0'});
+ for(let i=0;i<=3;i++){
+  const v=ymin+(ymax-ymin)*i/3,py=y(v);
+  add(svg,'line',{class:'trendGrid',x1:L,y1:py,x2:W-R,y2:py});
+  add(svg,'text',{class:'trendText',x:L-8,y:py+4,'text-anchor':'end'},v.toFixed(1));
+ }
+ const fmt=ts=>{const d=new Date(ts);return `${d.getUTCMonth()+1}/${d.getUTCDate()}`};
+ const mid=(xmin+xmax)/2;
+ if(data.length===1){add(svg,'text',{class:'trendText',x:xmin===xmax?L+pw/2:x(xmin),y:H-10,'text-anchor':'middle'},fmt(xmin))}
+ else for(const [ts,anchor] of [[xmin,'start'],[mid,'middle'],[xmax,'end']])add(svg,'text',{class:'trendText',x:x(ts),y:H-10,'text-anchor':anchor},fmt(ts));
+ const points=data.map(p=>({...p,x:x(p.ts),y:y(p.value)}));
+ let path=`M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+ if(points.length>1){
+  // Monotone cubic interpolation: do not overshoot recorded weights.
+  const slopes=[];
+  for(let i=0;i<points.length-1;i++)slopes.push((points[i+1].y-points[i].y)/(points[i+1].x-points[i].x));
+  const tangent=points.map((p,i)=>{
+   if(i===0)return slopes[0];if(i===points.length-1)return slopes[slopes.length-1];
+   const a=slopes[i-1],b=slopes[i];return a*b<=0?0:Math.sign(a)*Math.min(Math.abs(a),Math.abs(b),.5*(Math.abs(a)+Math.abs(b)));
+  });
+  for(let i=0;i<points.length-1;i++){
+   const a=points[i],b=points[i+1],dx=(b.x-a.x)/3;
+   path+=` C ${(a.x+dx).toFixed(2)} ${(a.y+tangent[i]*dx).toFixed(2)}, ${(b.x-dx).toFixed(2)} ${(b.y-tangent[i+1]*dx).toFixed(2)}, ${b.x.toFixed(2)} ${b.y.toFixed(2)}`;
+  }
+  const area=path+` L ${points[points.length-1].x.toFixed(2)} ${(H-B).toFixed(2)} L ${points[0].x.toFixed(2)} ${(H-B).toFixed(2)} Z`;
+  add(svg,'path',{d:area,fill:'url(#weightTrendFill)'});
+  add(svg,'path',{class:'trendLine',d:path});
+ }
+ const selected=data.some(p=>p.date===trendSelectedDate)?trendSelectedDate:null;
+ if(trendSelectedDate&&!selected)trendSelectedDate=null;
+ for(const p of points){
+  add(svg,'circle',{class:'trendDot',cx:p.x,cy:p.y,r:5});
+  if(p.date===selected)add(svg,'circle',{class:'trendSelected',cx:p.x,cy:p.y,r:6.4});
+  const hit=add(svg,'circle',{class:'trendHit',cx:p.x,cy:p.y,r:16,tabindex:0,role:'button','aria-label':`${p.date.replaceAll('-','/')}，${p.value.toFixed(1)} 公斤`});
+  const pick=()=>{trendSelectedDate=p.date;renderWeightChart()};
+  hit.addEventListener('click',pick);
+  hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
+ }
+ const chosen=selected?data.find(p=>p.date===selected):null;
+ detail.textContent=chosen?`${chosen.date.replaceAll('-','/')} · ${chosen.value.toFixed(1)} kg`:'';
+ graph.append(svg);
+}
+// 点图表数据点以外的任意位置，立即取消高亮与详情（不影响其他按钮）。
+document.addEventListener('click',e=>{
+ if(!trendSelectedDate||e.target.closest('.trendHit'))return;
+ trendSelectedDate=null;
+ renderWeightChart();
+});
+document.getElementById('trendRanges').addEventListener('click',e=>{
+ const b=e.target.closest('button[data-range]');if(!b)return;
+ trendRange=b.dataset.range;
+ for(const btn of document.querySelectorAll('.trendRange')){const active=btn===b;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active))}
+ trendSelectedDate=null;renderWeightChart();
+});
+const WEIGHT_PAGE_SIZE=10;
+let weightPageIndex=0;
+document.getElementById('weightPrevPage').addEventListener('click',()=>{if(weightPageIndex>0){weightPageIndex--;renderWeights()}});
+document.getElementById('weightNextPage').addEventListener('click',()=>{weightPageIndex++;renderWeights()});
+function renderWeights(){
+ try{renderWeightChart()}catch(err){console.error('体重趋势图渲染失败',err);const graph=document.getElementById('trendGraph');if(graph)graph.textContent='趋势图暂时无法显示，体重历史记录仍可正常使用'}
+ const list=Object.entries(weights).sort((a,b)=>b[0].localeCompare(a[0]));
+ const history=document.getElementById('weightHistory'),summary=document.getElementById('weightSummary');history.replaceChildren();summary.replaceChildren();
+ const pager=document.getElementById('weightPagination');
+ const pageCount=Math.ceil(list.length/WEIGHT_PAGE_SIZE);
+ weightPageIndex=Math.max(0,Math.min(weightPageIndex,Math.max(0,pageCount-1)));
+ pager.hidden=pageCount<=1;
+ document.getElementById('weightPageInfo').textContent=`${weightPageIndex+1} / ${Math.max(1,pageCount)}`;
+ document.getElementById('weightPrevPage').disabled=weightPageIndex===0;
+ document.getElementById('weightNextPage').disabled=weightPageIndex>=pageCount-1;
+ if(!list.length){const empty=document.createElement('div');empty.className='weightEmpty';empty.textContent='还没有体重记录';history.append(empty);return}
+ const latest=list[0], earliest=list[list.length-1];
+ for(const [label,value] of [['最新体重',latest[1].toFixed(1)+' kg'],['累计记录',list.length+' 次']]){const item=document.createElement('div');item.textContent=label;const strong=document.createElement('strong');strong.textContent=value;item.append(strong);summary.append(item)}
+ for(const [date,value] of list.slice(weightPageIndex*WEIGHT_PAGE_SIZE,(weightPageIndex+1)*WEIGHT_PAGE_SIZE)){
+  const row=document.createElement('div');row.className='weightRow';const info=document.createElement('div');const dt=document.createElement('div');dt.className='weightDate';dt.textContent=date;const wt=document.createElement('div');wt.className='weightValue';wt.textContent=value.toFixed(1)+' kg';info.append(dt,wt);
+  const actions=document.createElement('div');actions.className='weightRowActions';const edit=document.createElement('button');edit.type='button';edit.textContent='编辑';edit.onclick=()=>{setWeightDate(date);document.getElementById('weightAmount').value=value;document.getElementById('weightAmount').focus();window.scrollTo({top:0,behavior:'smooth'})};
+  const del=document.createElement('button');del.type='button';del.className='deleteWeight';del.textContent='删除';del.onclick=()=>{if(!confirm('确定删除 '+date+' 的体重记录？'))return;delete weights[date];saveWeights();renderWeights()};actions.append(edit,del);row.append(info,actions);history.append(row)
+ }
+}
+const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const formatWeightDate=d=>d.replaceAll('-','/');
+let datePickerYear=now.getFullYear(),datePickerMonth=now.getMonth();
+function setWeightDate(date){document.getElementById('weightDate').value=date;document.getElementById('weightDateText').textContent=formatWeightDate(date)}
+function renderDatePicker(){
+ const title=document.getElementById('datePickerTitle'),grid=document.getElementById('datePickerGrid');
+ title.textContent=`${datePickerYear} 年 ${datePickerMonth+1} 月`;grid.replaceChildren();
+ for(const name of ['一','二','三','四','五','六','日']){const day=document.createElement('span');day.className='dateWeekday';day.textContent=name;grid.append(day)}
+ const offset=(new Date(datePickerYear,datePickerMonth,1).getDay()+6)%7;
+ for(let i=0;i<offset;i++){const blank=document.createElement('span');grid.append(blank)}
+ const count=new Date(datePickerYear,datePickerMonth+1,0).getDate(),selected=document.getElementById('weightDate').value;
+ for(let day=1;day<=count;day++){
+  const date=key(datePickerYear,datePickerMonth,day);const button=document.createElement('button');button.type='button';button.className='dateCell'+(date===todayKey()?' isToday':'')+(date===selected?' isSelected':'');button.textContent=day;button.setAttribute('aria-label',formatWeightDate(date));
+  button.onclick=()=>{setWeightDate(date);closeDatePicker()};grid.append(button);
+ }
+ // 每个月补齐六周（42 个日期格），避免月份高度跳动。
+ for(let i=offset+count;i<42;i++){const blank=document.createElement('span');blank.setAttribute('aria-hidden','true');grid.append(blank)}
+}
+// 单层分段动画：滑出完成后才绘制新月份，避免重影。
+let dateTransitionTimers=[];
+let dateTransitionId=0;
+function resetDateAnimation(){
+ dateTransitionId++;
+ dateTransitionTimers.forEach(clearTimeout);dateTransitionTimers=[];
+ const grid=document.getElementById('datePickerGrid'),title=document.getElementById('datePickerTitle');
+ grid.classList.remove('outNext','outPrev','inNext','inPrev','todayPulse');
+ title.classList.remove('switching');
+}
+function openDatePicker(){
+ resetDateAnimation();const selected=document.getElementById('weightDate').value||todayKey();
+ const [y,m]=selected.split('-').map(Number);datePickerYear=y;datePickerMonth=m-1;
+ renderDatePicker();document.getElementById('dateDialog').hidden=false;
+}
+function closeDatePicker(){resetDateAnimation();document.getElementById('dateDialog').hidden=true}
+function navigatePicker(targetYear,targetMonth,direction=1,after){
+ resetDateAnimation();const id=dateTransitionId;
+ const grid=document.getElementById('datePickerGrid'),title=document.getElementById('datePickerTitle');
+ const changed=targetYear!==datePickerYear||targetMonth!==datePickerMonth;
+ if(!changed){
+  void grid.offsetWidth;grid.classList.add('todayPulse');title.classList.add('switching');
+  dateTransitionTimers.push(setTimeout(()=>{if(id!==dateTransitionId)return;resetDateAnimation();after?.()},410));
+  return;
+ }
+ const way=direction<0?'Prev':'Next';
+ void grid.offsetWidth;grid.classList.add('out'+way);title.classList.add('switching');
+ dateTransitionTimers.push(setTimeout(()=>{
+  if(id!==dateTransitionId)return;
+  grid.classList.remove('out'+way);
+  datePickerYear=targetYear;datePickerMonth=targetMonth;renderDatePicker();
+  grid.classList.add('in'+way);
+  dateTransitionTimers.push(setTimeout(()=>{
+   if(id!==dateTransitionId)return;
+   resetDateAnimation();after?.();
+  },270));
+ },190));
+}
+function changePickerMonth(delta){
+ const date=new Date(datePickerYear,datePickerMonth+delta,1);
+ navigatePicker(date.getFullYear(),date.getMonth(),Math.sign(delta));
+}
+document.getElementById('weightDateBtn').onclick=openDatePicker;
+document.getElementById('datePrev').onclick=()=>changePickerMonth(-1);
+document.getElementById('dateNext').onclick=()=>changePickerMonth(1);
+document.getElementById('datePrevYear').onclick=()=>changePickerMonth(-12);
+document.getElementById('dateNextYear').onclick=()=>changePickerMonth(12);
+document.getElementById('dateClose').onclick=closeDatePicker;
+document.getElementById('dateToday').onclick=()=>{const today=todayKey();const d=new Date();const diff=(d.getFullYear()-datePickerYear)*12+(d.getMonth()-datePickerMonth);navigatePicker(d.getFullYear(),d.getMonth(),Math.sign(diff)||1,()=>{setWeightDate(today);closeDatePicker()})};
+document.getElementById('dateDialog').addEventListener('click',e=>{if(e.target.id==='dateDialog')closeDatePicker()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDatePicker()});
+
+setWeightDate(todayKey());
+// v63: 使用唯一的体重保存入口，先更新本地记录与界面，再通知云端同步。
+(function(){
+ const form=document.getElementById('weightForm');
+ const input=document.getElementById('weightAmount');
+ const status=document.getElementById('weightError');
+ let saving=false;
+ function showWeightError(message){status.textContent=message;status.classList.remove('success')}
+ function submitWeight(event){
+  event?.preventDefault();
+  if(saving)return;
+  const date=document.getElementById('weightDate').value;
+  const raw=input.value.trim().replace(',','.');
+  const value=Number(raw);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    showWeightError('请选择有效日期');return;
+  }
+  if(!raw||!Number.isFinite(value)||value<1||value>500||Math.abs(value*10-Math.round(value*10))>1e-7){
+    showWeightError('请输入 1–500 kg 的体重，最多保留一位小数');return;
+  }
+  saving=true;
+  try{
+   const next={...weights,[date]:value};
+   localStorage.setItem(WEIGHT_KEY,JSON.stringify(next));
+   weights=next;
+   weightPageIndex=0;
+   status.textContent='';
+   input.value='';
+   try{renderWeights()}catch(error){
+    console.error('体重历史显示失败',error);
+    showWeightError('体重已保存，但显示更新失败，请刷新页面');
+   }
+   try{notifyChange('weights')}catch(error){console.warn('云同步待重试',error)}
+  }catch(error){
+   console.error('保存体重失败',error);
+   showWeightError('保存失败：'+(error?.message||String(error)));
+  }finally{saving=false}
+ }
+ form.addEventListener('submit',submitWeight);
+})();
+// 体重表单由独立脚本处理，保证核心保存不受图表和云模块异常影响。
+
+function selectPage(name){const cal=name==='calendar';document.getElementById('calendarPage').hidden=!cal;document.getElementById('weightPage').hidden=cal;document.getElementById('todayBtn').hidden=!cal;for(const [id,active] of [['tabCalendar',cal],['tabWeight',!cal]]){const button=document.getElementById(id);button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')}closeMenu();window.scrollTo(0,0);if(!cal)renderWeights()}
+document.getElementById('tabCalendar').onclick=()=>selectPage('calendar');document.getElementById('tabWeight').onclick=()=>selectPage('weight');
+renderWeights();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));}catch(e){alert('无法保存数据。请检查是否在隐私模式或文件预览中打开，建议使用 GitHub Pages 网页。')}notifyChange('entries')}
+
+// 中国与意大利节日：不调用网络，也不写入打卡记录。
+// 传统农历节日按中国农历日计算；2026、2027 年使用核对后的公历日期，
+// 避免部分平台的 Intl 农历算法在 2027 年春节附近出现一日偏差。
+const CHINA_FIXED={
+ '01-01':['元旦'], '05-01':['劳动节'], '10-01':['国庆节']
+};
+const ITALY_FIXED={
+ '01-01':['Capodanno'], '01-06':['Epifania'], '04-25':['Festa della Liberazione'],
+ '05-01':['Festa del Lavoro'], '06-02':['Festa della Repubblica'],
+ '06-24':['San Giovanni Battista (Torino)'], '08-15':['Ferragosto'],
+ '10-04':["San Francesco d’Assisi"], '11-01':['Ognissanti'],
+ '12-08':['Immacolata Concezione'], '12-25':['Natale'], '12-26':['Santo Stefano']
+};
+const LUNAR_FESTIVALS={
+ '1-1':'春节','1-15':'元宵节','5-5':'端午节','7-7':'七夕节',
+ '8-15':'中秋节','9-9':'重阳节','12-8':'腊八节'
+};
+// 已核实年份的主要农历节日（避免浏览器农历库日期差异）
+const VERIFIED_CHINA={
+ 2026:{'01-26':'腊八节','02-16':'除夕','02-17':'春节','03-03':'元宵节',
+       '06-19':'端午节','08-19':'七夕节','09-25':'中秋节','10-18':'重阳节'},
+ 2027:{'01-15':'腊八节','02-05':'除夕','02-06':'春节','02-20':'元宵节',
+       '06-09':'端午节','08-08':'七夕节','09-15':'中秋节','10-08':'重阳节'}
+};
+let lunarFormatter=null;
+try{lunarFormatter=new Intl.DateTimeFormat('en-u-ca-chinese',{
+ month:'numeric',day:'numeric',timeZone:'Asia/Shanghai'
+});}catch(e){console.warn('当前浏览器不支持中国农历格式',e)}
+function chineseLunarFestival(y,m,d){
+ const md=`${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+ if(VERIFIED_CHINA[y])return VERIFIED_CHINA[y][md]||null;
+ if(!lunarFormatter)return null;
+ try{
+  // 使用中国本地日期的正午，避免时区切换引起日期偏移。
+  const parts=lunarFormatter.formatToParts(new Date(Date.UTC(y,m-1,d,4)));
+  const rawMonth=parts.find(x=>x.type==='month')?.value||'';
+  if(!/^\d+$/.test(rawMonth))return null; // 跳过闰月
+  const lunarDay=Number(parts.find(x=>x.type==='day')?.value);
+  const lunarMonth=Number(rawMonth);
+  const name=LUNAR_FESTIVALS[`${lunarMonth}-${lunarDay}`];
+  if(name)return name;
+  // 除夕：农历新年前一天
+  if(lunarMonth===12&&lunarDay>=29){
+   const tomorrow=new Date(Date.UTC(y,m-1,d+1,4));
+   const p=lunarFormatter.formatToParts(tomorrow);
+   if(p.find(x=>x.type==='month')?.value==='1'&&p.find(x=>x.type==='day')?.value==='1')return '除夕';
+  }
+ }catch(e){}
+ return null;
+}
+function gregorianEaster(year){
+ const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+ const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3);
+ const h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4;
+ const l=(32+2*e+2*i-h-k+7)%7,mm=Math.floor((a+11*h+22*l)/451);
+ const n=Math.floor((h+l-7*mm+114)/31),day=(h+l-7*mm+114)%31+1;
+ return new Date(Date.UTC(year,n-1,day));
+}
+function holidaysFor(y,m,d){
+ const md=`${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+ const out=[];
+ for(const label of CHINA_FIXED[md]||[])out.push({country:'cn',label});
+ const lunar=chineseLunarFestival(y,m,d);
+ if(lunar)out.push({country:'cn',label:lunar});
+ // 清明节由节气决定，附近年份采用精确日期表；其余年份不猜测。
+ const qingming={2025:'04-04',2026:'04-05',2027:'04-05',2028:'04-04',2029:'04-04',2030:'04-05',2031:'04-05',2032:'04-04',2033:'04-04',2034:'04-05',2035:'04-05'};
+ if(qingming[y]===md)out.push({country:'cn',label:'清明节'});
+ for(const label of ITALY_FIXED[md]||[])if(y>=2026||md!=='10-04')out.push({country:'it',label});
+ const easter=gregorianEaster(y);
+ const current=Date.UTC(y,m-1,d);
+ if(current===easter.getTime())out.push({country:'it',label:'Pasqua'});
+ if(current===easter.getTime()+86400000)out.push({country:'it',label:'Pasquetta'});
+ return out;
+}
+
 function updateStats(){
- const completed=Object.keys(entries).filter(id=>/^\d{4}-\d{2}-\d{2}$/.test(id)&&validType(entries[id]?.type) ).sort();
+ const completed=Object.keys(entries).filter(id=>/^\d{4}-\d{2}-\d{2}$/.test(id)&&entryTypes(entries[id]).length>0 ).sort();
  const days=completed.length;
  el('stats').textContent=`${(days/30).toFixed(1)} 月 · ${(days/7).toFixed(1)} 周 · ${days} 天`;
  el('statsRange').textContent=days?`首次：${completed[0]}　最新：${completed[days-1]}`:'尚无打卡记录';
@@ -100,68 +589,311 @@ function render(){
  for(const wd of ['一','二','三','四','五','六','日']){let cell=document.createElement('div');cell.className='weekday';cell.textContent=wd;grid.append(cell)}
  const offset=(new Date(year,month,1).getDay()+6)%7;for(let i=0;i<offset;i++){let cell=document.createElement('div');cell.className='day empty';grid.append(cell)}
  const n=new Date(year,month+1,0).getDate();for(let d=1;d<=n;d++){
-  const id=key(year,month,d),item=entries[id],selected=item && validType(item.type),isToday=year===now.getFullYear()&&month===now.getMonth()&&d===now.getDate();
+  const id=key(year,month,d),item=entries[id],types=entryTypes(item),selected=types.length>0,isToday=year===now.getFullYear()&&month===now.getMonth()&&d===now.getDate();
   const box=document.createElement('div');box.className='day'+(isToday?' current':'');
   const num=document.createElement('div');num.className='number';num.textContent=d;if(isToday){let mark=document.createElement('em');mark.textContent='今';num.append(mark)}
-  const pick=document.createElement('button');pick.type='button';pick.className='pick'+(selected?' selected':'');pick.textContent=selected?item.type:'＋ 选择';pick.setAttribute('aria-label',`${id} 选择训练`);pick.addEventListener('click',()=>showPicker(id));
-  box.append(num,pick);grid.append(box);
+  const pick=document.createElement('button');pick.type='button';const restOnly=types.length===1&&types[0]==='休息';pick.className=selected?(restOnly?'pick restDay':'pick selected'):'pick';if(types.length>1)pick.classList.add('multiSelected');pick.textContent=selected?types.join('\n'):'＋ 选择';pick.setAttribute('aria-label',`${id} 选择训练：${types.join('、')||'未选择'}`);pick.addEventListener('click',()=>showPicker(id));
+  const heading=document.createElement('div');heading.className='dateHeading';heading.append(num);
+  const holidays=holidaysFor(year,month+1,d);
+  if(holidays.length){
+   const labels=document.createElement('div');labels.className='holidayLabels';
+   for(const holiday of holidays){
+    const label=document.createElement('span');label.className='holidayLabel '+holiday.country;
+    label.textContent=holiday.label;
+    labels.append(label);
+   }
+   heading.append(labels);
+  }
+  box.append(heading,pick);grid.append(box);
  }
 }
-function chooseTraining(type){const id=editing;if(!id)return;const old=entries[id];entries[id]={type,done:true};save();hidePicker();render()}
+function chooseTraining(type){
+ const id=editing;if(!id||!validType(type))return;
+ const current=entryTypes(entries[id]);
+ const types=current.includes(type)?current.filter(t=>t!==type):[...current,type];
+ if(types.length)entries[id]={type:types[0],types,done:true};else delete entries[id];
+ save();render();renderPicker();
+}
+function moveTraining(type, delta){
+ const visible=orderedTypes(), index=visible.indexOf(type),target=visible[index+delta];
+ if(!target)return;
+ const from=trainingOrder.indexOf(type),to=trainingOrder.indexOf(target);
+ if(from<0||to<0)return;
+ trainingOrder.splice(from,1);trainingOrder.splice(to,0,type);
+ saveOrder(); openedTrainingRow=type; movingTrainingRow=type; renderPicker();
+}
+function renameTraining(oldName,newName){
+ const target=newName.trim();
+ if(!validType(target))return '请输入 1 至 60 个字符的训练名称';
+ if(target===oldName)return '';
+ if(trainingOrder.includes(target)&&!hiddenTraining.includes(target))return '训练项目名称已存在';
+ // Only rename the selectable training option. Existing dated records keep their original names.
+ trainingOrder=trainingOrder.map(t=>t===oldName?target:t);
+ trainingOrder=[...new Set(trainingOrder)];
+ // The old name may still appear in history, so hide it from the selectable list.
+ // cleanOrder() also automatically re-adds preset names; hiding works for both types.
+ hiddenTraining=hiddenTraining.filter(t=>t!==target);
+ if(!hiddenTraining.includes(oldName))hiddenTraining.push(oldName);
+ saveHidden();saveOrder();
+ return '';
+}
+let closeTrainingInlineEditor=null;
 function renderPicker(){
+ if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}
  const id=editing;if(!id)return;
- el('sortBtn').textContent=sortMode?'✓':'⇅';el('sortBtn').title=sortMode?'完成排序':'调整顺序与删除项目';el('sortBtn').setAttribute('aria-label',sortMode?'完成排序':'调整顺序与删除项目');el('sortInfo').hidden=!sortMode;
  const options=el('options');options.replaceChildren();
- // Preserve custom exercises from existing records, even on older app versions.
- const fromHistory=Object.values(entries).map(x=>x?.type).filter(x=>validType(x)&&!TYPES.includes(x));
+ const fromHistory=Object.values(entries).flatMap(entryTypes).filter(x=>!TYPES.includes(x));
  for(const t of fromHistory)if(!trainingOrder.includes(t))trainingOrder.push(t);
  const ordered=orderedTypes();
  for(const type of ordered){
-   const row=document.createElement('div');row.className='sortRow';row.dataset.type=type;
-   const button=document.createElement('button');button.className='option'+(entries[id]?.type===type?' active':'');button.textContent=type;
-   button.onclick=()=>{if(!sortMode)chooseTraining(type)};
-   row.append(button);
-   if(sortMode){
-    button.setAttribute('aria-label',type+'（排序中）');
-    const handle=document.createElement('button');handle.className='sortHandle';handle.textContent='☰';handle.type='button';handle.setAttribute('aria-label','拖动排序：'+type);
-    row.append(handle);
-    const remove=document.createElement('button');remove.type='button';remove.className='removeTraining';remove.textContent='×';remove.title='从选项列表中移除：'+type;remove.setAttribute('aria-label','移除训练项目：'+type);remove.onclick=()=>{
-      // 使用页面内二次确认，避免 Safari / 网页预览拦截原生 confirm 弹窗。
-      if(row.dataset.confirming==='1')return;
-      row.dataset.confirming='1';
-      remove.hidden=true;
-      const ok=document.createElement('button');ok.type='button';ok.className='removeTraining confirmRemove';ok.textContent='确认移除';ok.setAttribute('aria-label','确认移除：'+type);
-      const cancel=document.createElement('button');cancel.type='button';cancel.className='removeTraining cancelRemove';cancel.textContent='取消';cancel.setAttribute('aria-label','取消移除：'+type);
-      ok.onclick=()=>{hiddenTraining.push(type);saveHidden();renderPicker()};
-      cancel.onclick=()=>{row.dataset.confirming='0';ok.remove();cancel.remove();remove.hidden=false};
-      row.append(ok,cancel);
-    };row.append(remove);
-    let pointer=null,dragging=false;
-    handle.addEventListener('pointerdown',e=>{if(e.button!==0)return;pointer=e.pointerId;dragging=true;row.classList.add('dragging');handle.setPointerCapture(e.pointerId);e.preventDefault()});
-    handle.addEventListener('pointermove',e=>{if(!dragging||e.pointerId!==pointer)return;for(const v of options.querySelectorAll('.dropTarget'))v.classList.remove('dropTarget');const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.sortRow');if(hit&&hit!==row)hit.classList.add('dropTarget')});
-    handle.addEventListener('pointerup',e=>{if(!dragging||e.pointerId!==pointer)return;dragging=false;row.classList.remove('dragging');const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.sortRow');if(hit&&hit!==row){const from=trainingOrder.indexOf(type),to=trainingOrder.indexOf(hit.dataset.type);if(from>=0&&to>=0){trainingOrder.splice(from,1);trainingOrder.splice(to,0,type);saveOrder()}}renderPicker()});
-    handle.addEventListener('pointercancel',()=>{dragging=false;row.classList.remove('dragging');renderPicker()});
-   }
-   options.append(row);
+  const row=document.createElement('div');row.className='swipeRow';row.dataset.type=type;
+  if(openedTrainingRow===type)row.classList.add('revealed');
+  const actions=document.createElement('div');actions.className='swipeActions';
+  const move=document.createElement('button');move.type='button';move.className='swipeMove';move.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"></path><path d="M5 12h14"></path><path d="M5 17h14"></path></svg>';move.setAttribute('aria-label','移动训练项目：'+type);
+  const remove=document.createElement('button');remove.type='button';remove.className='swipeDelete';remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>';remove.setAttribute('aria-label','删除训练项目：'+type);
+  actions.append(move,remove);
+  const active=entryTypes(entries[id]).includes(type);const front=document.createElement('button');front.type='button';front.className='option swipeFront'+(active?' active':'');front.textContent=(active?'✓  ':'')+type;front.setAttribute('aria-pressed',String(active));
+  front.setAttribute('aria-label',type+'，向左滑动可移动或删除');
+  let suppressClickUntil=0;
+  let pressTimer=null,pressOrigin=null;
+  const stopPress=()=>{if(pressTimer!==null){clearTimeout(pressTimer);pressTimer=null;}pressOrigin=null;};
+  const startInlineEdit=()=>{
+    stopPress();suppressClickUntil=performance.now()+900;
+    openedTrainingRow=null;movingTrainingRow=null;
+    row.classList.remove('revealed','confirming','swipeTracking');
+    row.style.removeProperty('--swipe-reveal');row.style.removeProperty('--swipe-progress');
+    const box=document.createElement('div');
+    box.className='option swipeFront trainingEditFront';
+    front.replaceWith(box);
+    const input=document.createElement('input');input.className='trainingEditInput';
+    input.type='text';input.maxLength=60;input.value=type;
+    input.setAttribute('aria-label','编辑训练项目名称');
+    const cleanup=()=>document.removeEventListener('click',saveOnOutsideClick,true);
+    const cancel=()=>{cleanup();closeTrainingInlineEditor=null;renderPicker();};
+    const commit=()=>{
+      const error=renameTraining(type,input.value);
+      if(error){input.setCustomValidity(error);input.reportValidity();input.setCustomValidity('');input.focus();return false;}
+      cleanup();closeTrainingInlineEditor=null;render();renderPicker();return true;
+    };
+    // First click elsewhere saves the edit without selecting another training item.
+    const saveOnOutsideClick=e=>{
+      if(box.contains(e.target))return;
+      e.preventDefault();e.stopImmediatePropagation();commit();
+    };
+    input.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){e.preventDefault();commit()}
+      else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cancel()}
+    });
+    box.append(input);
+    closeTrainingInlineEditor=cleanup;
+    document.addEventListener('click',saveOnOutsideClick,true);
+    // Focus the actual text input with the caret at the end; don't highlight the name.
+    input.focus({preventScroll:true});
+    input.setSelectionRange(input.value.length,input.value.length);
+  };
+  const closeOtherRows=()=>{
+    for(const other of options.querySelectorAll('.swipeRow.revealed')){
+      if(other===row)continue;
+      other.classList.remove('revealed','confirming');
+      other.style.removeProperty('--swipe-reveal');
+      other.style.removeProperty('--swipe-progress');
+    }
+  };
+  front.onclick=()=>{
+    if(performance.now()<suppressClickUntil)return;
+    if(row.classList.contains('revealed')||row.classList.contains('confirming')){
+      const wasConfirming=row.classList.contains('confirming');
+      row.classList.remove('revealed','confirming');openedTrainingRow=null;movingTrainingRow=null;
+      if(wasConfirming)setTimeout(resetDeleteButtons,460);
+      return;
+    }
+    chooseTraining(type);
+  };
+  // 拖动距离实时决定展开宽度，松手后以自然缓动吸附到完全展开或关闭。
+  const REVEAL_WIDTH=152;
+  let gesture=null;
+  const resetDeleteButtons=()=>{if(row.isConnected&&!row.classList.contains('confirming'))actions.replaceChildren(move,remove)};
+  // Allow tapping blank space to gently retract a revealed or confirming row.
+  row.closeSwipe=()=>{
+    const wasConfirming=row.classList.contains('confirming');
+    row.classList.remove('revealed','confirming','swipeTracking');
+    row.style.removeProperty('--swipe-reveal');
+    row.style.removeProperty('--swipe-progress');
+    if(openedTrainingRow===type)openedTrainingRow=null;
+    if(movingTrainingRow===type)movingTrainingRow=null;
+    if(wasConfirming)setTimeout(resetDeleteButtons,460);
+  };
+  const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+  front.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    gesture={id:e.pointerId,x:e.clientX,y:e.clientY,time:performance.now(),width:(row.classList.contains('revealed')||row.classList.contains('confirming'))?REVEAL_WIDTH:0,swiping:false};
+    stopPress();pressOrigin={id:e.pointerId,x:e.clientX,y:e.clientY};
+    pressTimer=setTimeout(()=>{
+      if(pressOrigin?.id===e.pointerId&&gesture&&!gesture.swiping){gesture=null;startInlineEdit();}
+    },550);
+  });
+  front.addEventListener('pointermove',e=>{
+    if(!gesture||e.pointerId!==gesture.id)return;
+    const dx=e.clientX-gesture.x,dy=e.clientY-gesture.y;
+    if(Math.hypot(dx,dy)>9)stopPress();
+    if(!gesture.swiping){
+      if(Math.abs(dy)>Math.abs(dx)*1.3&&Math.abs(dy)>9){gesture=null;return;}
+      if(Math.abs(dx)<9||Math.abs(dx)<Math.abs(dy)*1.2)return;
+      gesture.swiping=true;
+      closeOtherRows();
+      row.classList.add('swipeTracking');
+      front.setPointerCapture(e.pointerId);
+    }
+    const width=clamp(gesture.width-dx,0,REVEAL_WIDTH);
+    row.style.setProperty('--swipe-reveal',width+'px');
+    row.style.setProperty('--swipe-progress',String(width/REVEAL_WIDTH));
+    e.preventDefault();
+  });
+  const endGesture=(e,cancelled=false)=>{
+    stopPress();
+    if(!gesture||e.pointerId!==gesture.id)return;
+    const {x,time,width:initialWidth,swiping}=gesture;
+    gesture=null;
+    if(!swiping)return;
+    suppressClickUntil=performance.now()+420;
+    const dx=e.clientX-x;
+    const currentWidth=clamp(initialWidth-dx,0,REVEAL_WIDTH);
+    const elapsed=Math.max(1,performance.now()-time);
+    const speed=dx/elapsed;
+    const opened=cancelled?(initialWidth>0):(Math.abs(speed)>.45&&Math.abs(dx)>16?dx<0:currentWidth>REVEAL_WIDTH*.48);
+    // Commit the precise finger-controlled state before enabling the snap animation.
+    void actions.offsetWidth;
+    row.classList.remove('swipeTracking');
+    const wasConfirming=row.classList.contains('confirming');
+    row.classList.toggle('revealed',opened);
+    if(wasConfirming&&!opened)row.classList.remove('confirming');
+    row.style.removeProperty('--swipe-reveal');
+    row.style.removeProperty('--swipe-progress');
+    openedTrainingRow=opened?type:null;
+    movingTrainingRow=null;
+    if(wasConfirming&&!opened)setTimeout(resetDeleteButtons,460);
+  };
+  front.addEventListener('contextmenu',e=>e.preventDefault());
+  front.addEventListener('pointerup',e=>endGesture(e));
+  front.addEventListener('pointercancel',e=>endGesture(e,true));
+  front.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')stopPress()});
+  let suppressMoveClickUntil=0;
+  // 单击三横线不再显示额外按钮；按住并上下拖动即可排序。
+  move.onclick=()=>{};
+  // 按住移动手柄时，让浮动卡片跟手移动，并通过 FLIP 动画把其他项目挤开。
+  let drag=null;
+  const reorderPlaceholder=(clientY)=>{
+    if(!drag?.started)return;
+    const candidates=[...options.querySelectorAll('.swipeRow:not(.dragSource)')];
+    let destination=null;
+    for(const candidate of candidates){
+      const rect=candidate.getBoundingClientRect();
+      if(clientY<rect.top+rect.height/2){destination=candidate;break;}
+    }
+    const siblings=[...options.children];
+    const oldIndex=siblings.indexOf(drag.placeholder);
+    // The add-training (+) button is a fixed footer, not a sortable target.
+    const addButton=options.querySelector('.addTraining, .addTrainingForm');
+    const targetIndex=destination?siblings.indexOf(destination):(addButton?siblings.indexOf(addButton):siblings.length);
+    if(targetIndex===oldIndex||targetIndex===oldIndex+1)return;
+    const before=new Map(candidates.map(item=>[item,item.getBoundingClientRect()]));
+    if(destination)options.insertBefore(drag.placeholder,destination);
+    else options.insertBefore(drag.placeholder,addButton);
+    for(const candidate of candidates){
+      const prev=before.get(candidate),next=candidate.getBoundingClientRect();
+      const dy=prev.top-next.top;
+      if(Math.abs(dy)>.5){
+        candidate.getAnimations().forEach(a=>{if(a.id==='training-shift')a.cancel()});
+        const anim=candidate.animate([{transform:`translateY(${dy}px)`},{transform:'translateY(0)'}],{
+          duration:240,easing:'cubic-bezier(.22,1,.36,1)'
+        });
+        anim.id='training-shift';
+      }
+    }
+  };
+  const startDrag=()=>{
+    if(!drag||drag.started)return;
+    drag.started=true;
+    const rect=row.getBoundingClientRect();
+    const placeholder=document.createElement('div');placeholder.className='dragPlaceholder';placeholder.style.height=rect.height+'px';
+    row.before(placeholder);
+    const ghost=row.cloneNode(true);ghost.classList.add('dragGhost');
+    ghost.style.left=rect.left+'px';ghost.style.top=rect.top+'px';ghost.style.width=rect.width+'px';ghost.style.height=rect.height+'px';
+    document.body.append(ghost);
+    row.classList.add('dragSource');
+    drag.placeholder=placeholder;drag.ghost=ghost;drag.top=rect.top;drag.height=rect.height;
+  };
+  const finishDrag=(cancelled=false)=>{
+    if(!drag)return;
+    const d=drag;drag=null;
+    if(!d.started)return;
+    suppressMoveClickUntil=performance.now()+500;
+    const visible=[...options.children].filter(e=>e.classList.contains('swipeRow')||e.classList.contains('dragPlaceholder'));
+    const newVisible=visible.map(e=>e===d.placeholder?type:e.dataset.type).filter(Boolean);
+    d.ghost.remove();d.placeholder.remove();row.classList.remove('dragSource');
+    if(!cancelled){
+      const before=orderedTypes();
+      if(before.join('\u0000')!==newVisible.join('\u0000')){
+        let i=0;trainingOrder=trainingOrder.map(t=>before.includes(t)?newVisible[i++]:t);
+        saveOrder();
+      }
+    }
+    openedTrainingRow=type;movingTrainingRow=null;renderPicker();
+  };
+  move.addEventListener('pointerdown',e=>{
+    if(e.button!==0)return;
+    drag={id:e.pointerId,startY:e.clientY,started:false};
+    move.setPointerCapture(e.pointerId);
+  });
+  move.addEventListener('pointermove',e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    const dy=e.clientY-drag.startY;
+    if(!drag.started&&Math.abs(dy)>7)startDrag();
+    if(!drag.started)return;
+    // Keep the floating training card above the fixed (+) row.
+    const addButton=options.querySelector('.addTraining, .addTrainingForm');
+    const addTop=addButton?.getBoundingClientRect().top;
+    const maxTop=addTop===undefined?Infinity:addTop-drag.height-8;
+    drag.ghost.style.top=Math.min(drag.top+dy,maxTop)+'px';
+    reorderPlaceholder(e.clientY);
+    // 贴近选择窗口边缘时滚动，方便调整长列表。
+    const sheet=options.closest('.sheet');
+    if(sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top+65)sheet.scrollTop-=9;else if(e.clientY>r.bottom-65)sheet.scrollTop+=9;}
+    e.preventDefault();
+  });
+  move.addEventListener('pointerup',e=>{if(drag?.id===e.pointerId)finishDrag(false)});
+  move.addEventListener('pointercancel',e=>{if(drag?.id===e.pointerId)finishDrag(true)});
+  move.addEventListener('lostpointercapture',()=>{if(drag)finishDrag(true)});
+  remove.onclick=()=>{
+   if(row.classList.contains('confirming'))return;
+   row.classList.add('confirming');actions.replaceChildren();
+   const yes=document.createElement('button');yes.className='swipeConfirm';yes.textContent='确认';yes.type='button';
+   const no=document.createElement('button');no.className='swipeCancel';no.textContent='取消';no.type='button';
+   yes.onclick=()=>{if(!hiddenTraining.includes(type))hiddenTraining.push(type);saveHidden();openedTrainingRow=null;movingTrainingRow=null;renderPicker()};
+   no.onclick=()=>{row.classList.remove('confirming','revealed');openedTrainingRow=null;movingTrainingRow=null;setTimeout(resetDeleteButtons,460)};
+   actions.append(yes,no);
+  };
+  row.append(front,actions);options.append(row);
  }
- if(sortMode&&hiddenTraining.length){
-  const restore=document.createElement('div');restore.className='restoreBox';const heading=document.createElement('div');heading.className='hint';heading.textContent='已移除的项目（点击恢复）';restore.append(heading);
-  for(const type of hiddenTraining){const item=document.createElement('div');item.className='restoreItem';const name=document.createElement('span');name.textContent=type;const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent='恢复';b.onclick=()=>{hiddenTraining=hiddenTraining.filter(t=>t!==type);saveHidden();renderPicker()};item.append(name,b);restore.append(item)}options.append(restore);
- }
- if(!sortMode){
-  const custom=document.createElement('div');custom.className='customBox';
-  const label=document.createElement('label');label.className='hint';label.textContent='自定义训练项目（最多 60 字）';label.htmlFor='customTraining';
-  const input=document.createElement('input');input.id='customTraining';input.className='customInput';input.type='text';input.maxLength=60;input.placeholder='例如：核心训练、慢跑 30 分钟';input.value=entries[id]&&!TYPES.includes(entries[id].type)?entries[id].type:'';
-  const saveCustom=document.createElement('button');saveCustom.className='option customSave';saveCustom.textContent='＋ 保存自定义训练';
-  const commit=()=>{const type=input.value.trim();if(!type){input.focus();return}registerCustom(type);chooseTraining(type)};
-  saveCustom.onclick=commit;input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit()}});
-  custom.append(label,input,saveCustom);options.append(custom);
-  if(entries[id]){let clear=document.createElement('button');clear.className='option';clear.textContent='清除此日安排';clear.onclick=()=>{delete entries[id];save();hidePicker();render()};options.append(clear)}
- }
+ // 添加新训练项目的加号始终留在列表最后。
+ const add=document.createElement('button');add.type='button';add.className='option addTraining';add.textContent='＋';add.setAttribute('aria-label','添加新训练项目');
+ add.onclick=()=>{
+   // If a training row's swipe controls are open, the first tap on + only
+   // retracts those controls. Tapping + again opens the add-training form.
+   const opened=[...options.querySelectorAll('.swipeRow.revealed, .swipeRow.confirming')];
+   if(opened.length){opened.forEach(row=>row.closeSwipe?.());return;}
+   const form=document.createElement('div');form.className='addTrainingForm';
+   const input=document.createElement('input');input.id='customTraining';input.className='customInput';input.type='text';input.maxLength=60;input.placeholder='输入训练项目名称';input.setAttribute('aria-label','新训练项目名称');
+   const actionBar=document.createElement('div');actionBar.className='addTrainingActions';
+   const saveBtn=document.createElement('button');saveBtn.type='button';saveBtn.className='secondary addTrainingSave';saveBtn.textContent='添加';
+   const cancelBtn=document.createElement('button');cancelBtn.type='button';cancelBtn.className='secondary';cancelBtn.textContent='取消';
+   const commit=()=>{const t=input.value.trim();if(!t){input.focus();return}registerCustom(t);renderPicker()};
+   saveBtn.onclick=commit;input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit()}if(e.key==='Escape'){e.stopPropagation();renderPicker()}});
+   cancelBtn.onclick=()=>renderPicker();actionBar.append(saveBtn,cancelBtn);form.append(input,actionBar);add.replaceWith(form);input.focus();
+ };options.append(add);
 }
-function showPicker(id){editing=id;sortMode=false;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('panel').classList.add('show')}
-el('sortBtn').onclick=()=>{sortMode=!sortMode;renderPicker()};
-function hidePicker(){editing=null;sortMode=false;el('panel').classList.remove('show')}
+function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('panel').classList.add('show')}
+function hidePicker(){if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show')}
 el('monthView').onclick=()=>setView('month');el('listView').onclick=()=>setView('list');
 
 function closeMenu(){el('appMenu').hidden=true;el('menuBtn').setAttribute('aria-expanded','false')}
@@ -172,11 +904,74 @@ el('themeBtn').onclick=()=>{closeMenu();drawThemeEditor();el('themePanel').class
 el('closeTheme').onclick=closeTheme;
 el('resetTheme').onclick=()=>setTheme(DEFAULT_THEME);
 el('themePanel').addEventListener('click',e=>{if(e.target===el('themePanel'))closeTheme()});
-el('cancel').onclick=hidePicker;el('panel').addEventListener('click',e=>{if(e.target===el('panel'))hidePicker()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){hidePicker();closeTheme()}});
-function changeMonth(delta){let next=new Date(year,month+delta,1);year=next.getFullYear();month=next.getMonth();render()}
-el('prev').onclick=()=>changeMonth(-1);el('next').onclick=()=>changeMonth(1);el('todayBtn').onclick=()=>{year=now.getFullYear();month=now.getMonth();render()};
-el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,theme,viewMode,trainingOrder,hiddenTraining},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)&&v&&validType(v.type))cleaned[id]={type:v.type,done:!!v.done}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
+el('cancel').onclick=hidePicker;
+// When any training row is expanded, the first tap on another training item
+// only closes the swipe actions. A second tap can then select that item.
+el('panel').addEventListener('click',e=>{
+  const targetRow=e.target.closest('.swipeRow');
+  if(!targetRow||!e.target.closest('.swipeFront'))return;
+  const opened=[...el('options').querySelectorAll('.swipeRow.revealed, .swipeRow.confirming')];
+  if(!opened.length||opened.includes(targetRow))return;
+  opened.forEach(row=>row.closeSwipe?.());
+  e.preventDefault();
+  e.stopImmediatePropagation();
+},true);
+// Tapping empty space closes swipe actions first, without dismissing the picker.
+el('panel').addEventListener('click',e=>{
+  const opened=el('options').querySelectorAll('.swipeRow.revealed, .swipeRow.confirming');
+  if(!opened.length||e.target.closest('.swipeRow'))return;
+  // Do not intercept real controls; only the non-interactive blank areas.
+  if(e.target.closest('button,input,textarea,select,label'))return;
+  opened.forEach(row=>row.closeSwipe?.());
+  if(e.target===el('panel'))e.stopPropagation();
+},true);
+el('panel').addEventListener('click',e=>{if(e.target===el('panel'))hidePicker()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){hidePicker();closeTheme()}});
+let mainTransitionId=0;
+let mainTransitionTimers=[];
+function resetMainAnimation(){
+ mainTransitionId++;
+ for(const timer of mainTransitionTimers)clearTimeout(timer);
+ mainTransitionTimers=[];
+ el('calendar').classList.remove('outNext','outPrev','inNext','inPrev','todayPulse');
+ el('month').classList.remove('switching');
+}
+function navigateMainCalendar(targetYear,targetMonth,direction=1){
+ resetMainAnimation();
+ const id=mainTransitionId;
+ const grid=el('calendar'),title=el('month');
+ if(targetYear===year&&targetMonth===month){
+  void grid.offsetWidth;grid.classList.add('todayPulse');title.classList.add('switching');
+  mainTransitionTimers.push(setTimeout(()=>{if(id===mainTransitionId)resetMainAnimation()},410));
+  return;
+ }
+ const way=direction<0?'Prev':'Next';
+ // 先让旧日历滑出；完成后再替换日期并让新日历滑入，绝不重叠。
+ void grid.offsetWidth;grid.classList.add('out'+way);title.classList.add('switching');
+ mainTransitionTimers.push(setTimeout(()=>{
+  if(id!==mainTransitionId)return;
+  grid.classList.remove('out'+way);
+  year=targetYear;month=targetMonth;render();
+  grid.classList.add('in'+way);
+  mainTransitionTimers.push(setTimeout(()=>{
+   if(id===mainTransitionId)resetMainAnimation();
+  },270));
+ },190));
+}
+function changeMonth(delta){
+ const next=new Date(year,month+delta,1);
+ navigateMainCalendar(next.getFullYear(),next.getMonth(),Math.sign(delta));
+}
+el('prevYear').onclick=()=>changeMonth(-12);
+el('prev').onclick=()=>changeMonth(-1);
+el('next').onclick=()=>changeMonth(1);
+el('nextYear').onclick=()=>changeMonth(12);
+el('todayBtn').onclick=()=>{
+ const today=new Date();
+ const diff=(today.getFullYear()-year)*12+(today.getMonth()-month);
+ navigateMainCalendar(today.getFullYear(),today.getMonth(),Math.sign(diff)||1);
+};
+el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,theme,viewMode,trainingOrder,hiddenTraining},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
 render();
 </script>
 <script type="module">
@@ -199,10 +994,10 @@ const uidKey='fitness-calendar-cloud-uid-v7';
 let auth,db,user=null,unsub=null,processing=false,ready=false,timer=null;
 let pending=readPending();
 const isDate=k=>/^\d{4}-\d{2}-\d{2}$/.test(k);
-function readPending(){try{const x=JSON.parse(localStorage.getItem(pendingKey)||'null');return x&&typeof x==='object'?{dates:x.dates||{},theme:!!x.theme,view:!!x.view,order:!!x.order}:{dates:{},theme:false,view:false,order:false}}catch{return {dates:{},theme:false,view:false,order:false}}}
+function readPending(){const empty=()=>({dates:{},weights:{},theme:false,view:false,order:false});try{const x=JSON.parse(localStorage.getItem(pendingKey)||'null');if(!x||typeof x!=='object'||Array.isArray(x))return empty();return {dates:x.dates&&typeof x.dates==='object'&&!Array.isArray(x.dates)?x.dates:{},weights:x.weights&&typeof x.weights==='object'&&!Array.isArray(x.weights)?x.weights:{},theme:!!x.theme,view:!!x.view,order:!!x.order}}catch{return empty()}}
 function storePending(){localStorage.setItem(pendingKey,JSON.stringify(pending))}
 const copy=obj=>JSON.parse(JSON.stringify(obj));
-let baseline=copy(entries);
+let baseline=copy(entries);let weightBaseline=copy(weights);
 function display(message,stamp=false){status.textContent=message;if(stamp)time.textContent='最近成功同步：'+new Date().toLocaleString('zh-CN')}
 function setCloudUI(logged){$('loginBtn').hidden=logged;$('logoutBtn').hidden=!logged;$('syncBtn').hidden=!logged}
 function markChanges(kind){
@@ -210,6 +1005,11 @@ function markChanges(kind){
   const keys=new Set([...Object.keys(baseline),...Object.keys(entries)]);
   for(const k of keys){if(!isDate(k))continue;const old=JSON.stringify(baseline[k]),next=JSON.stringify(entries[k]);if(old!==next)pending.dates[k]=entries[k]?copy(entries[k]):null}
   baseline=copy(entries);
+ }else if(kind==='weights'){
+  if(!pending.weights||typeof pending.weights!=='object')pending.weights={};
+  const keys=new Set([...Object.keys(weightBaseline),...Object.keys(weights)]);
+  for(const k of keys){if(!isDate(k))continue;if(weightBaseline[k]!==weights[k])pending.weights[k]=weights[k]??null}
+  weightBaseline=copy(weights);
  }else if(kind==='theme')pending.theme=true;
  else if(kind==='view')pending.view=true;
  else if(kind==='order')pending.order=true;
@@ -217,13 +1017,16 @@ function markChanges(kind){
 }
 window.addEventListener('fitness-change',e=>markChanges(e.detail.type));
 function schedule(){clearTimeout(timer);timer=setTimeout(()=>sync(),650)}
-function cleanEntries(obj){const out={};for(const [k,v] of Object.entries(obj||{})){if(isDate(k)&&v&&typeof v.type==='string'&&v.type.trim().length>0&&v.type.length<=60){out[k]={type:v.type,done:!!v.done}}}return out}
+function cleanEntries(obj){const out={};for(const [k,v] of Object.entries(obj||{})){if(!isDate(k))continue;const normalized=normalEntry(v);if(normalized)out[k]=normalized;}return out}
 function cleanTheme(obj){const out={};for(const k of Object.keys(DEFAULT_THEME))if(typeof obj?.[k]==='string'&&/^#[a-f\d]{6}$/i.test(obj[k]))out[k]=obj[k];return out}
 function applyRemote(remote){
  // Pull only unedited remote dates; leave pending local changes untouched.
  const fromCloud=cleanEntries(remote.entries);const next={...fromCloud};
  for(const [k,v] of Object.entries(pending.dates))if(isDate(k)){if(v===null)delete next[k];else next[k]=v}
  entries=next;baseline=copy(next);localStorage.setItem(KEY,JSON.stringify(next));
+ const remoteWeights=cleanWeights(remote.weights),mergedWeights={...remoteWeights};
+ for(const [k,v] of Object.entries(pending.weights))if(isDate(k)){if(v===null)delete mergedWeights[k];else if(validWeight(v))mergedWeights[k]=v}
+ weights=mergedWeights;weightBaseline=copy(mergedWeights);localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));renderWeights();
  if(!pending.theme&&remote.theme){theme={...DEFAULT_THEME,...cleanTheme(remote.theme)};applyTheme();localStorage.setItem(THEME_KEY,JSON.stringify(theme))}
  if(!pending.order&&Array.isArray(remote.trainingOrder)){trainingOrder=cleanOrder(remote.trainingOrder);localStorage.setItem(ORDER_KEY,JSON.stringify(trainingOrder))}
  if(!pending.order&&Array.isArray(remote.hiddenTraining)){hiddenTraining=remote.hiddenTraining.filter(t=>validType(t));localStorage.setItem(HIDDEN_KEY,JSON.stringify(hiddenTraining))}
@@ -238,8 +1041,8 @@ async function sync(){
  try{
   const ref=doc(db,'users',currentUser);
   const firstSync=!localStorage.getItem('fitness-calendar-initial-'+currentUser);
-  const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||firstSync;
-  const local=copy(entries);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);
+  const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||Object.keys(patch.weights).length||firstSync;
+  const local=copy(entries);const localWeights=copy(weights);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);
   let latest;
   if(hasPatch){
    latest=await runTransaction(db,async tx=>{
@@ -249,11 +1052,16 @@ async function sync(){
     if(!snap.exists())Object.assign(merged,cleanEntries(local));
     else if(firstSync){for(const [k,v] of Object.entries(cleanEntries(local)))if(!(k in merged))merged[k]=v}
     for(const [k,v] of Object.entries(patch.dates))if(isDate(k)){if(v===null)delete merged[k];else merged[k]=v}
-    const result={entries:merged,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],updatedAt:Date.now()};
+    const mergedWeights={...cleanWeights(remote.weights)};
+     if(!snap.exists())Object.assign(mergedWeights,cleanWeights(localWeights));
+     else if(firstSync){for(const [k,v] of Object.entries(cleanWeights(localWeights)))if(!(k in mergedWeights))mergedWeights[k]=v}
+     for(const [k,v] of Object.entries(patch.weights))if(isDate(k)){if(v===null)delete mergedWeights[k];else if(validWeight(v))mergedWeights[k]=Number(v)}
+     const result={entries:merged,weights:mergedWeights,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],updatedAt:Date.now()};
     tx.set(ref,result);return result;
    });
    // Never discard changes created during the asynchronous upload.
    for(const [k,v] of Object.entries(patch.dates))if(JSON.stringify(pending.dates[k])===JSON.stringify(v))delete pending.dates[k];
+    for(const [k,v] of Object.entries(patch.weights))if(JSON.stringify(pending.weights[k])===JSON.stringify(v))delete pending.weights[k];
    if(patch.theme&&JSON.stringify(theme)===JSON.stringify(currentTheme))pending.theme=false;
    if(patch.view&&viewMode===currentView)pending.view=false;
    if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden))pending.order=false;
@@ -261,13 +1069,13 @@ async function sync(){
   }else{
    const snap=await getDoc(ref);
    if(!snap.exists()){
-    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,updatedAt:Date.now()};tx.set(ref,result);return result});
+    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,updatedAt:Date.now()};tx.set(ref,result);return result});
    }else latest=snap.data();
   }
   if(user?.uid!==currentUser)return;
   localStorage.setItem('fitness-calendar-initial-'+currentUser,'1');
   applyRemote(latest);display('🟢 已同步 · '+(user.displayName||user.email||'Google 账号'),true);
-  if(Object.keys(pending.dates).length||pending.theme||pending.view||pending.order)schedule();
+  if(Object.keys(pending.dates).length||Object.keys(pending.weights).length||pending.theme||pending.view||pending.order)schedule();
  }catch(err){console.error('云端同步失败',err);display('🟠 同步未完成：'+(err.code||err.message)+' · 本地记录已保留')}
  finally{processing=false}
 }
@@ -282,9 +1090,9 @@ async function initialize(){
    const pastUser=localStorage.getItem(uidKey);
    if(pastUser&&pastUser!==user.uid){
     // Never automatically upload another account's local data.
-    pending={dates:{},theme:false,view:false,order:false};storePending();
+    pending={dates:{},weights:{},theme:false,view:false,order:false};storePending();
     if(!confirm('检测到不同的 Google 账号。是否将本机记录保留并仅在本机查看？取消则先从新账号读取云端记录。')){
-     entries={};baseline={};localStorage.setItem(KEY,'{}');render();
+     entries={};baseline={};localStorage.setItem(KEY,'{}');weights={};weightBaseline={};localStorage.setItem(WEIGHT_KEY,'{}');renderWeights();render();
     }else{await signOut(auth);alert('请使用原 Google 账号登录，避免混用不同账号的记录。');return}
    }
    localStorage.setItem(uidKey,user.uid);
