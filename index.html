@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
 <meta name="theme-color" content="#f7f5ee"/>
 <title>健身日历</title>
 <style>
@@ -173,6 +173,15 @@
 .trendEmpty{display:flex;align-items:center;justify-content:center;height:190px;color:var(--muted);font-size:14px;text-align:center;padding:12px}
 @media(max-width:420px){.trendRange{font-size:11px;padding:8px 4px}.trendGraph{min-height:165px}}
 
+
+/* v75：手机端阻止页面缩放，保留正常上下滚动与操作手势 */
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media(max-width:600px){
+ .trendGraph{min-height:0}
+ .trendGraph svg{width:100%;height:auto;min-height:0}
+ .trendDetail{font-size:13px}
+}
+
 /* v65 体重历史：长按原位编辑，左滑展开独立删除按钮 */
 .weightSwipeRow{--weight-reveal:0px;--weight-progress:0;display:flex;gap:0;align-items:stretch;min-height:83px;overflow:hidden;border-bottom:1px solid var(--border);touch-action:pan-y}
 .weightSwipeRow:last-child{border-bottom:0}
@@ -180,7 +189,7 @@
 .weightSwipeActions{flex:0 0 var(--weight-reveal);width:var(--weight-reveal);min-width:0;display:flex;align-items:stretch;overflow:hidden;box-sizing:border-box;gap:calc(10px * var(--weight-progress));padding-left:calc(10px * var(--weight-progress));padding-top:8px;padding-bottom:8px}
 .weightSwipeRow:not(.weightTracking) .weightSwipeActions{transition:flex-basis .42s cubic-bezier(.22,1,.36,1),width .42s cubic-bezier(.22,1,.36,1),padding-left .42s cubic-bezier(.22,1,.36,1)}
 .weightSwipeRow.weightOpen{--weight-reveal:76px;--weight-progress:1}
-.weightSwipeActions button{flex:1;min-width:0;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:#ff6969;font:inherit;display:flex;align-items:center;justify-content:center;opacity:var(--weight-progress);transform:scale(calc(.82 + .18 * var(--weight-progress)));transform-origin:right center;transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s cubic-bezier(.22,1,.36,1);cursor:pointer}
+.weightSwipeActions button{flex:1;min-width:0;position:relative;z-index:2;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:#ff6969;font:inherit;display:flex;align-items:center;justify-content:center;opacity:var(--weight-progress);transform:scale(calc(.82 + .18 * var(--weight-progress)));transform-origin:right center;transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s cubic-bezier(.22,1,.36,1);cursor:pointer}
 .weightSwipeRow.weightTracking .weightSwipeActions button{transition:none}
 .weightSwipeActions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .weightValue:has(.weightInlineInput){display:flex;align-items:center;gap:7px;white-space:nowrap}.weightInlineInput{flex:0 1 130px;min-width:0;width:min(130px,100%);font:inherit;font-size:19px;font-weight:700;color:var(--text);background:var(--pickbg);border:1px solid var(--yellow);border-radius:8px;padding:5px 8px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
@@ -269,6 +278,11 @@ const THEME_KEY='fitness-calendar-theme-v1';
 const VIEW_KEY='fitness-calendar-view-v1';
 const WEIGHT_KEY='fitness-calendar-weights-v1';
 const notifyChange=(type)=>window.dispatchEvent(new CustomEvent('fitness-change',{detail:{type}}));
+// Mobile Safari: prevent pinch page zoom, keep scrolling, swipe controls and form input usable.
+for(const kind of ['gesturestart','gesturechange']){
+ document.addEventListener(kind,e=>e.preventDefault(),{passive:false});
+}
+
 const CLASSIC_THEME={bg:'#101114',card:'#1c1e22',border:'#32353b',text:'#f5f5f7',muted:'#999ba3',yellow:'#f0cf55',buttonText:'#171717',surface:'#25272c',picker:'#23252a',pickbg:'#282a2e',pickText:'#bfc0c4'};
 const DEFAULT_THEME={...CLASSIC_THEME,bg:'#f7f5ee',card:'#ffffff',border:'#dedbd0',text:'#242424',muted:'#73736c',yellow:'#feab23',buttonText:'#151515',surface:'#eeece4',picker:'#ffffff',pickbg:'#f7f3e7',pickText:'#4c4c4c'};
 const PRESETS={
@@ -342,7 +356,8 @@ function renderWeightChart(){
   const empty=document.createElement('div');empty.className='trendEmpty';empty.textContent='所选时间段内暂无体重记录';graph.append(empty);
   detail.textContent='添加体重后会自动显示趋势';return;
  }
- const W=760,H=270,L=46,R=15,T=18,B=39,pw=W-L-R,ph=H-T-B;
+ const compactChart=window.matchMedia('(max-width:600px)').matches;
+ const W=compactChart?360:760,H=compactChart?258:270,L=compactChart?43:46,R=compactChart?12:15,T=18,B=39,pw=W-L-R,ph=H-T-B;
  const minVal=Math.min(...data.map(p=>p.value)),maxVal=Math.max(...data.map(p=>p.value));
  const pad=Math.max(0.5,(maxVal-minVal)*0.22);
  const ymin=minVal-pad,ymax=maxVal+pad;
@@ -384,9 +399,9 @@ function renderWeightChart(){
  const selected=data.some(p=>p.date===trendSelectedDate)?trendSelectedDate:null;
  if(trendSelectedDate&&!selected)trendSelectedDate=null;
  for(const p of points){
-  add(svg,'circle',{class:'trendDot',cx:p.x,cy:p.y,r:5});
+  add(svg,'circle',{class:'trendDot',cx:p.x,cy:p.y,r:compactChart?5.8:5});
   if(p.date===selected)add(svg,'circle',{class:'trendSelected',cx:p.x,cy:p.y,r:6.4});
-  const hit=add(svg,'circle',{class:'trendHit',cx:p.x,cy:p.y,r:16,tabindex:0,role:'button','aria-label':`${p.date.replaceAll('-','/')}，${p.value.toFixed(1)} 公斤`});
+  const hit=add(svg,'circle',{class:'trendHit',cx:p.x,cy:p.y,r:compactChart?19:16,tabindex:0,role:'button','aria-label':`${p.date.replaceAll('-','/')}，${p.value.toFixed(1)} 公斤`});
   const pick=()=>{trendSelectedDate=p.date;renderWeightChart()};
   hit.addEventListener('click',pick);
   hit.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}});
@@ -401,6 +416,7 @@ document.addEventListener('click',e=>{
  trendSelectedDate=null;
  renderWeightChart();
 });
+window.addEventListener('resize',()=>{if(!document.getElementById('weightPage').hidden)renderWeightChart()});
 document.getElementById('trendRanges').addEventListener('click',e=>{
  const b=e.target.closest('button[data-range]');if(!b)return;
  trendRange=b.dataset.range;
@@ -542,7 +558,21 @@ function renderWeights(){
   front.addEventListener('pointercancel',()=>{clearPress();down=null;swiping=false;row.classList.remove('weightTracking');collapse()});
   front.addEventListener('contextmenu',e=>e.preventDefault());
   front.addEventListener('click',()=>{if(editing||ignoreClick)return;if(row.classList.contains('weightOpen'))collapse();else for(const other of history.querySelectorAll('.weightSwipeRow.weightOpen'))other.classList.remove('weightOpen')});
-  del.addEventListener('click',()=>openWeightDeleteDialog(date,del));
+  // iPhone Safari can consume the first synthetic click after a horizontal swipe.
+  // Use direct touch/pen release for first-tap response, keeping click for mouse/keyboard.
+  let lastTouchActivation=0;
+  del.addEventListener('pointerdown',e=>{e.stopPropagation()});
+  del.addEventListener('pointerup',e=>{
+   if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
+   e.preventDefault();e.stopPropagation();
+   lastTouchActivation=Date.now();
+   openWeightDeleteDialog(date,del);
+  });
+  del.addEventListener('click',e=>{
+   e.stopPropagation();
+   if(Date.now()-lastTouchActivation<700)return;
+   openWeightDeleteDialog(date,del);
+  });
  }
 }
 // 点体重记录以外的空白位置，收起左滑删除按钮。
