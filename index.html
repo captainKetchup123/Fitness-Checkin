@@ -70,7 +70,14 @@
 .weightPagination button{border:1px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);padding:9px 13px;font-size:13px}.weightPagination button:disabled{opacity:.35;cursor:default}.weightPagination span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 @media(max-width:370px){.weightPagination{gap:9px}.weightPagination button{padding:8px 9px}}
 .weightSummary{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:14px;color:var(--muted);font-size:13px}.weightSummary strong{display:block;font-size:23px;color:var(--yellow);margin-top:4px}
-@media(max-width:460px){.weightInputs{grid-template-columns:1fr}.weightCard{padding:15px}}
+.weightCardHead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}.weightCardHead h2{margin:0}.weightCardHead.compact{margin-bottom:0}
+.weightToggleBtn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:40px;padding:0;border:1px solid var(--border);border-radius:12px;background:var(--surface);color:var(--text);box-shadow:0 1px 0 #fff9 inset,0 2px 0 #79715d24,0 5px 12px #50483612;transition:transform .2s ease,box-shadow .2s ease}.weightToggleBtn:hover{box-shadow:0 1px 0 #fff9 inset,0 2px 0 #79715d30,0 7px 14px #50483620}.weightToggleBtn:active{transform:translateY(1px);box-shadow:0 1px 0 #fff9 inset,0 1px 0 #79715d30}.weightToggleBtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .42s cubic-bezier(.22,1,.36,1)}.weightToggleBtn[aria-expanded='false'] svg{transform:rotate(180deg)}
+/* v73: 用可插值的网格轨道高度来动画，避免 height:auto 瞬间跳变 */
+.weightHistoryBody{display:grid;grid-template-rows:minmax(0,1fr);opacity:1;margin-top:10px;transition:grid-template-rows .62s cubic-bezier(.25,.8,.25,1),opacity .46s ease,margin-top .62s cubic-bezier(.25,.8,.25,1);}
+.weightHistoryInner{min-height:0;overflow:hidden;}
+.weightHistoryCard.collapsed .weightHistoryBody{grid-template-rows:minmax(0,0fr);opacity:0;margin-top:0;pointer-events:none;}
+@media(prefers-reduced-motion:reduce){.weightHistoryBody,.weightToggleBtn svg{transition-duration:.01ms!important}}
+@media(max-width:460px){.weightInputs{grid-template-columns:1fr}.weightCard{padding:15px}.weightCardHead{align-items:center}.weightToggleBtn{width:40px;height:38px}}
 /* 体重日期：自定义主题日历，避免浏览器的地区格式差异 */
 .dateDisplay{width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;padding:10px 12px;background:var(--pickbg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px}
 .dateDisplay svg{width:19px;height:19px;flex-shrink:0;fill:none;stroke:var(--muted);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
@@ -148,7 +155,7 @@
 
 /* v56：体重趋势，使用实际日期间距和保形平滑曲线 */
 .trendHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-.trendHeader h2{margin:0}.trendChange{font-size:13px;font-weight:700;color:var(--muted)}
+.trendHeader h2{margin:0}
 .trendRanges{display:flex;gap:5px;margin:16px 0 10px;overflow-x:auto;scrollbar-width:none}
 .trendRanges::-webkit-scrollbar{display:none}
 .trendRange{flex:1;min-width:49px;white-space:nowrap;padding:8px 6px;border:1px solid transparent;border-radius:10px;background:var(--surface);color:var(--muted);font-size:12px;font-weight:600}
@@ -165,6 +172,42 @@
 .trendDetail{min-height:20px;color:var(--text);font-size:13px;font-weight:600;text-align:center;margin-top:5px}
 .trendEmpty{display:flex;align-items:center;justify-content:center;height:190px;color:var(--muted);font-size:14px;text-align:center;padding:12px}
 @media(max-width:420px){.trendRange{font-size:11px;padding:8px 4px}.trendGraph{min-height:165px}}
+
+/* v65 体重历史：长按原位编辑，左滑展开独立删除按钮 */
+.weightSwipeRow{--weight-reveal:0px;--weight-progress:0;display:flex;gap:0;align-items:stretch;min-height:83px;overflow:hidden;border-bottom:1px solid var(--border);touch-action:pan-y}
+.weightSwipeRow:last-child{border-bottom:0}
+.weightSwipeFront{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:space-between;padding:14px 0;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
+.weightSwipeActions{flex:0 0 var(--weight-reveal);width:var(--weight-reveal);min-width:0;display:flex;align-items:stretch;overflow:hidden;box-sizing:border-box;gap:calc(10px * var(--weight-progress));padding-left:calc(10px * var(--weight-progress));padding-top:8px;padding-bottom:8px}
+.weightSwipeRow:not(.weightTracking) .weightSwipeActions{transition:flex-basis .42s cubic-bezier(.22,1,.36,1),width .42s cubic-bezier(.22,1,.36,1),padding-left .42s cubic-bezier(.22,1,.36,1)}
+.weightSwipeRow.weightOpen{--weight-reveal:76px;--weight-progress:1}
+.weightSwipeActions button{flex:1;min-width:0;border:1px solid var(--border);border-radius:13px;background:var(--surface);color:#ff6969;font:inherit;display:flex;align-items:center;justify-content:center;opacity:var(--weight-progress);transform:scale(calc(.82 + .18 * var(--weight-progress)));transform-origin:right center;transition:transform .4s cubic-bezier(.22,1,.36,1),opacity .4s cubic-bezier(.22,1,.36,1);cursor:pointer}
+.weightSwipeRow.weightTracking .weightSwipeActions button{transition:none}
+.weightSwipeActions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.weightValue:has(.weightInlineInput){display:flex;align-items:center;gap:7px;white-space:nowrap}.weightInlineInput{flex:0 1 130px;min-width:0;width:min(130px,100%);font:inherit;font-size:19px;font-weight:700;color:var(--text);background:var(--pickbg);border:1px solid var(--yellow);border-radius:8px;padding:5px 8px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
+.weightInlineHint{font-size:12px;color:#c44b43;margin-top:3px}
+
+/* v67: 体重历史固定两列、每列10行，按列从新到旧排列 */
+#weightHistory:has(.weightSwipeRow){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(10,auto);grid-auto-flow:column;column-gap:12px;row-gap:10px;align-items:stretch}
+#weightHistory .weightSwipeRow{min-width:0;min-height:83px;margin:0;border:1px solid var(--border);border-radius:13px;background:var(--card)}
+#weightHistory .weightSwipeFront{padding:12px;min-width:0}
+#weightHistory .weightSwipeFront>div{min-width:0}
+#weightHistory .weightDate{font-size:12px;white-space:nowrap}
+#weightHistory .weightValue{font-size:19px;white-space:nowrap}
+#weightHistory .weightSwipeActions{padding-top:7px;padding-bottom:7px}
+#weightHistory .weightInlineInput{width:90px;flex:0 1 90px;padding:5px 5px;font-size:18px}
+@media(max-width:420px){#weightHistory:has(.weightSwipeRow){column-gap:8px;row-gap:8px}#weightHistory .weightSwipeRow{min-height:75px;border-radius:11px}#weightHistory .weightSwipeFront{padding:9px}#weightHistory .weightDate{font-size:11px}#weightHistory .weightValue{font-size:17px}#weightHistory .weightSwipeRow.weightOpen{--weight-reveal:60px;--weight-progress:1}#weightHistory .weightInlineInput{width:75px;flex-basis:75px;font-size:16px}}
+
+/* 体重记录删除确认弹窗 */
+.weightDeleteBackdrop{position:fixed;inset:0;z-index:80;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px;animation:weightConfirmFade .18s ease-out}
+.weightDeleteCard{width:min(340px,100%);background:var(--picker);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:22px 20px 18px;box-shadow:0 18px 45px #0003;animation:weightConfirmEnter .2s cubic-bezier(.2,.8,.2,1)}
+.weightDeleteCard h2{font-size:19px;margin:0 0 10px;text-align:center}.weightDeleteCard h2:empty{display:none}
+.weightDeleteCard p{font-size:14px;line-height:1.65;color:var(--muted);margin:0 0 20px;text-align:center}
+.weightDeleteButtons{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.weightDeleteButtons button{min-height:46px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--text)}
+.weightDeleteButtons .weightDeleteConfirm{color:#ff6969;font-weight:650}
+@keyframes weightConfirmFade{from{opacity:0}to{opacity:1}}
+@keyframes weightConfirmEnter{from{opacity:0;transform:scale(.96) translateY(7px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@media(prefers-reduced-motion:reduce){.weightDeleteBackdrop,.weightDeleteCard{animation:none}}
 </style>
 </head>
 <body><main class="app">
@@ -175,7 +218,7 @@
 <div id="calendar" class="calendar"></div></div>
 <section id="weightPage" class="weightPage" hidden aria-label="体重记录">
   <div class="weightCard weightTrendCard">
-    <div class="trendHeader"><h2>体重趋势</h2><div class="trendChange" id="trendChange" aria-live="polite"></div></div>
+    <div class="trendHeader"><h2>体重趋势</h2></div>
     <div class="trendRanges" id="trendRanges" role="group" aria-label="体重趋势时间范围">
       <button type="button" class="trendRange active" data-range="1" aria-pressed="true">1个月</button>
       <button type="button" class="trendRange" data-range="3" aria-pressed="false">3个月</button>
@@ -191,13 +234,13 @@
     <form id="weightForm" novalidate>
       <div class="weightInputs">
         <div class="weightField"><label for="weightDateBtn">日期</label><input id="weightDate" type="hidden"/><button id="weightDateBtn" class="dateDisplay" type="button" aria-haspopup="dialog" aria-controls="dateDialog"><span id="weightDateText">请选择日期</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"/></svg></button></div>
-        <label class="weightField">体重（kg）<input id="weightAmount" type="number" inputmode="decimal" step="0.1" min="1" max="500" placeholder="例如 65.5" required/></label>
+        <label class="weightField">体重（kg）<input id="weightAmount" type="number" inputmode="decimal" step="any" min="1" max="500" placeholder="例如 65.5" required/></label>
       </div>
       <button class="weightSave" type="submit">保存体重</button>
       <div id="weightError" class="weightError" role="status"></div>
     </form>
   </div>
-  <div class="weightCard"><h2>体重历史</h2><div id="weightSummary" class="weightSummary"></div><div id="weightHistory"></div><nav id="weightPagination" class="weightPagination" aria-label="体重历史分页" hidden><button type="button" id="weightPrevPage" aria-label="上一页">‹ 上一页</button><span id="weightPageInfo" aria-live="polite"></span><button type="button" id="weightNextPage" aria-label="下一页">下一页 ›</button></nav></div>
+  <div class="weightCard weightHistoryCard" id="weightHistoryCard"><div class="weightCardHead compact"><h2>体重历史</h2><button type="button" id="weightHistoryToggle" class="weightToggleBtn" aria-expanded="true" aria-controls="weightHistoryBody"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6"/></svg></button></div><div id="weightHistoryBody" class="weightHistoryBody"><div class="weightHistoryInner" id="weightHistoryInner"><div id="weightSummary" class="weightSummary"></div><div id="weightHistory"></div><nav id="weightPagination" class="weightPagination" aria-label="体重历史分页" hidden><button type="button" id="weightPrevPage" aria-label="上一页">‹ 上一页</button><span id="weightPageInfo" aria-live="polite"></span><button type="button" id="weightNextPage" aria-label="下一页">下一页 ›</button></nav></div></div></div>
 </section>
 
 </main>
@@ -205,6 +248,13 @@
 <button type="button" class="tabBtn active" id="tabCalendar" aria-current="page"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M7.5 3.5v3"></path><path d="M16.5 3.5v3"></path><path d="M3.5 9.5h17"></path><path d="M8 13h.01"></path><path d="M12 13h.01"></path><path d="M16 13h.01"></path><path d="M8 17h.01"></path><path d="M12 17h.01"></path></svg></span>日历</button>
 <button type="button" class="tabBtn" id="tabWeight"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 5.5h11a2 2 0 0 1 2 2v9a2.5 2.5 0 0 1-2.5 2.5h-10A2.5 2.5 0 0 1 4.5 16.5v-9a2 2 0 0 1 2-2Z"></path><path d="M8 9.5a4 4 0 0 1 8 0"></path><path d="M12 9.5l1.8-1.3"></path><path d="M9 14.5h6"></path></svg></span>体重</button>
 </div></nav>
+<div id="weightDeleteDialog" class="weightDeleteBackdrop" role="dialog" aria-modal="true" aria-label="删除体重记录确认" aria-describedby="weightDeleteDescription" hidden>
+  <div class="weightDeleteCard">
+    <h2 id="weightDeleteTitle"></h2>
+    <p id="weightDeleteDescription"></p>
+    <div class="weightDeleteButtons"><button type="button" id="weightDeleteCancel">取消</button><button type="button" id="weightDeleteConfirm" class="weightDeleteConfirm">确认</button></div>
+  </div>
+</div>
 <div id="dateDialog" class="dateBackdrop" hidden role="dialog" aria-modal="true" aria-label="选择体重记录日期"><div class="datePickerCard">
  <div class="datePickerHeader"><div class="datePickerTitle" id="datePickerTitle"></div><div class="datePickerArrows"><button id="datePrevYear" type="button" aria-label="上一年">«</button><button id="datePrev" type="button" aria-label="上个月">‹</button><button id="dateNext" type="button" aria-label="下个月">›</button><button id="dateNextYear" type="button" aria-label="下一年">»</button></div></div>
  <div class="dateGridStage" id="dateGridStage"><div class="datePickerGrid" id="datePickerGrid"></div></div><div class="datePickerFooter"><button id="dateToday" type="button">今天</button><button id="dateClose" type="button">取消</button></div>
@@ -264,6 +314,7 @@ function normalEntry(entry){
 let entries={};
 try{let raw=JSON.parse(localStorage.getItem(KEY)||'{}');if(raw&&typeof raw==='object'&&!Array.isArray(raw)){for(const [d,v] of Object.entries(raw)){const item=normalEntry(v);if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&item)entries[d]=item;}}}catch(e){console.warn('读取记录失败',e)}
 let weights={};
+function roundWeight(x){return Math.round((Number(x)+Number.EPSILON)*10)/10}
 function validWeight(x){const n=Number(x);return x!==null&&x!==''&&Number.isFinite(n)&&n>=1&&n<=500&&Math.round(n*10)===n*10}
 function cleanWeights(obj){const out={};if(!obj||typeof obj!=='object'||Array.isArray(obj))return out;for(const [d,v] of Object.entries(obj)){if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&!Number.isNaN(Date.parse(d+'T00:00:00'))&&validWeight(v))out[d]=Number(v)}return out}
 try{weights=cleanWeights(JSON.parse(localStorage.getItem(WEIGHT_KEY)||'{}'))}catch(e){console.warn('读取体重记录失败',e)}
@@ -275,7 +326,7 @@ const key=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'
 let trendRange='1';
 let trendSelectedDate=null;
 function renderWeightChart(){
- const graph=document.getElementById('trendGraph'),detail=document.getElementById('trendDetail'),change=document.getElementById('trendChange');
+ const graph=document.getElementById('trendGraph'),detail=document.getElementById('trendDetail');
  if(!graph)return;
  graph.replaceChildren();
  const today=new Date(),todayUTC=Date.UTC(today.getFullYear(),today.getMonth(),today.getDate());
@@ -289,10 +340,8 @@ function renderWeightChart(){
   .filter(p=>Number.isFinite(p.ts)&&p.ts>=cutoff&&p.ts<=todayUTC).sort((a,b)=>a.ts-b.ts);
  if(!data.length){
   const empty=document.createElement('div');empty.className='trendEmpty';empty.textContent='所选时间段内暂无体重记录';graph.append(empty);
-  change.textContent='';detail.textContent='添加体重后会自动显示趋势';return;
+  detail.textContent='添加体重后会自动显示趋势';return;
  }
- const difference=data[data.length-1].value-data[0].value;
- change.textContent=data.length>1?`变化 ${difference>0?'+':''}${difference.toFixed(1)} kg`:'1 条记录';
  const W=760,H=270,L=46,R=15,T=18,B=39,pw=W-L-R,ph=H-T-B;
  const minVal=Math.min(...data.map(p=>p.value)),maxVal=Math.max(...data.map(p=>p.value));
  const pad=Math.max(0.5,(maxVal-minVal)*0.22);
@@ -358,10 +407,53 @@ document.getElementById('trendRanges').addEventListener('click',e=>{
  for(const btn of document.querySelectorAll('.trendRange')){const active=btn===b;btn.classList.toggle('active',active);btn.setAttribute('aria-pressed',String(active))}
  trendSelectedDate=null;renderWeightChart();
 });
-const WEIGHT_PAGE_SIZE=10;
+const WEIGHT_PAGE_SIZE=20;
 let weightPageIndex=0;
 document.getElementById('weightPrevPage').addEventListener('click',()=>{if(weightPageIndex>0){weightPageIndex--;renderWeights()}});
 document.getElementById('weightNextPage').addEventListener('click',()=>{weightPageIndex++;renderWeights()});
+const WEIGHT_HISTORY_COLLAPSED_KEY='fitness-calendar-weight-history-collapsed-v1';
+let weightHistoryCollapsed=false;
+try{weightHistoryCollapsed=localStorage.getItem(WEIGHT_HISTORY_COLLAPSED_KEY)==='1'}catch(e){}
+const weightHistoryCard=document.getElementById('weightHistoryCard');
+const weightHistoryToggle=document.getElementById('weightHistoryToggle');
+function applyWeightHistoryCollapsed(){
+ const expanded=!weightHistoryCollapsed;
+ weightHistoryToggle.setAttribute('aria-expanded',String(expanded));
+ weightHistoryToggle.setAttribute('aria-label',expanded?'收起体重历史':'展开体重历史');
+ weightHistoryCard.classList.toggle('collapsed',!expanded);
+}
+function setWeightHistoryCollapsed(next){
+ weightHistoryCollapsed=!!next;
+ try{localStorage.setItem(WEIGHT_HISTORY_COLLAPSED_KEY,weightHistoryCollapsed?'1':'0')}catch(e){}
+ applyWeightHistoryCollapsed();
+}
+weightHistoryToggle.addEventListener('click',()=>setWeightHistoryCollapsed(!weightHistoryCollapsed));
+applyWeightHistoryCollapsed();
+let pendingWeightDeleteDate=null;
+let weightDeleteReturnFocus=null;
+function closeWeightDeleteDialog(){
+ const dialog=document.getElementById('weightDeleteDialog');dialog.hidden=true;
+ pendingWeightDeleteDate=null;
+ if(weightDeleteReturnFocus?.isConnected)weightDeleteReturnFocus.focus({preventScroll:true});
+ weightDeleteReturnFocus=null;
+}
+function openWeightDeleteDialog(date,button){
+ pendingWeightDeleteDate=date;weightDeleteReturnFocus=button;
+ document.getElementById('weightDeleteDescription').textContent=`确定删除 ${date.replaceAll('-','/')} 的体重记录吗？`;
+ document.getElementById('weightDeleteDialog').hidden=false;
+ document.getElementById('weightDeleteCancel').focus({preventScroll:true});
+}
+document.getElementById('weightDeleteCancel').addEventListener('click',closeWeightDeleteDialog);
+document.getElementById('weightDeleteConfirm').addEventListener('click',()=>{
+ const date=pendingWeightDeleteDate;
+ if(!date)return;
+ const updated={...weights};delete updated[date];
+ try{localStorage.setItem(WEIGHT_KEY,JSON.stringify(updated))}catch(err){alert('删除失败：'+(err.message||err));return}
+ closeWeightDeleteDialog();weights=updated;renderWeights();
+ try{notifyChange('weights')}catch(err){console.warn('本地删除成功，云同步暂未完成',err)}
+});
+document.getElementById('weightDeleteDialog').addEventListener('click',e=>{if(e.target.id==='weightDeleteDialog')closeWeightDeleteDialog()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!document.getElementById('weightDeleteDialog').hidden){e.preventDefault();closeWeightDeleteDialog()}});
 function renderWeights(){
  try{renderWeightChart()}catch(err){console.error('体重趋势图渲染失败',err);const graph=document.getElementById('trendGraph');if(graph)graph.textContent='趋势图暂时无法显示，体重历史记录仍可正常使用'}
  const list=Object.entries(weights).sort((a,b)=>b[0].localeCompare(a[0]));
@@ -377,11 +469,88 @@ function renderWeights(){
  const latest=list[0], earliest=list[list.length-1];
  for(const [label,value] of [['最新体重',latest[1].toFixed(1)+' kg'],['累计记录',list.length+' 次']]){const item=document.createElement('div');item.textContent=label;const strong=document.createElement('strong');strong.textContent=value;item.append(strong);summary.append(item)}
  for(const [date,value] of list.slice(weightPageIndex*WEIGHT_PAGE_SIZE,(weightPageIndex+1)*WEIGHT_PAGE_SIZE)){
-  const row=document.createElement('div');row.className='weightRow';const info=document.createElement('div');const dt=document.createElement('div');dt.className='weightDate';dt.textContent=date;const wt=document.createElement('div');wt.className='weightValue';wt.textContent=value.toFixed(1)+' kg';info.append(dt,wt);
-  const actions=document.createElement('div');actions.className='weightRowActions';const edit=document.createElement('button');edit.type='button';edit.textContent='编辑';edit.onclick=()=>{setWeightDate(date);document.getElementById('weightAmount').value=value;document.getElementById('weightAmount').focus();window.scrollTo({top:0,behavior:'smooth'})};
-  const del=document.createElement('button');del.type='button';del.className='deleteWeight';del.textContent='删除';del.onclick=()=>{if(!confirm('确定删除 '+date+' 的体重记录？'))return;delete weights[date];saveWeights();renderWeights()};actions.append(edit,del);row.append(info,actions);history.append(row)
+  const row=document.createElement('div');row.className='weightSwipeRow';
+  const front=document.createElement('div');front.className='weightSwipeFront';front.setAttribute('aria-label',date+' 体重 '+value.toFixed(1)+' kg，长按编辑，左滑删除');
+  const info=document.createElement('div');
+  const dt=document.createElement('div');dt.className='weightDate';dt.textContent=date;
+  const wt=document.createElement('div');wt.className='weightValue';wt.textContent=value.toFixed(1)+' kg';
+  info.append(dt,wt);front.append(info);
+  const actions=document.createElement('div');actions.className='weightSwipeActions';
+  const del=document.createElement('button');del.type='button';del.setAttribute('aria-label','删除 '+date+' 的体重');
+  del.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+  actions.append(del);row.append(front,actions);history.append(row);
+  const revealWidth=window.matchMedia('(max-width:420px)').matches?60:76;
+  let timer=null,down=null,swiping=false,editing=false,ignoreClick=false;
+  const clearPress=()=>{if(timer!==null){clearTimeout(timer);timer=null}};
+  const collapse=()=>{row.classList.remove('weightOpen','weightTracking');row.style.removeProperty('--weight-reveal');row.style.removeProperty('--weight-progress')};
+  const editWeight=()=>{
+   if(editing)return;
+   editing=true;ignoreClick=true;clearPress();collapse();
+   wt.replaceChildren();
+   const field=document.createElement('input');field.className='weightInlineInput';field.type='number';field.step='any';field.min='1';field.max='500';field.inputMode='decimal';field.value=String(value);field.setAttribute('aria-label',date+' 的体重 kg');
+   const unit=document.createTextNode(' kg');
+   wt.append(field,unit);
+   const tip=document.createElement('div');tip.className='weightInlineHint';tip.hidden=true;info.append(tip);
+   let ended=false;
+   const finish=(save=true)=>{
+    if(ended)return;
+    if(!save){ended=true;renderWeights();return;}
+    const raw=field.value.trim().replace(',','.');const inputNumber=Number(raw);const next=roundWeight(inputNumber);
+    if(!raw||!Number.isFinite(inputNumber)||inputNumber<1||inputNumber>500){tip.hidden=false;tip.textContent='请输入 1–500 kg 的有效体重';field.focus();return}
+    if(next!==value){
+     const updated={...weights,[date]:next};
+     try{localStorage.setItem(WEIGHT_KEY,JSON.stringify(updated))}catch(err){tip.hidden=false;tip.textContent='保存失败：'+(err.message||err);field.focus();return}
+     weights=updated;
+     try{notifyChange('weights')}catch(err){console.warn('体重已保存到本地，云同步暂时失败',err)}
+    }
+    ended=true;renderWeights();
+   };
+   field.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();finish()}if(e.key==='Escape'){e.preventDefault();finish(false)}});
+   field.addEventListener('blur',()=>finish());
+   field.focus({preventScroll:true});
+  };
+  front.addEventListener('pointerdown',e=>{
+   if(e.button!==0||editing)return;
+   clearPress();swiping=false;down={id:e.pointerId,x:e.clientX,y:e.clientY,width:row.classList.contains('weightOpen')?revealWidth:0};
+   timer=setTimeout(()=>{if(down&&!swiping){down=null;editWeight()}},550);
+  });
+  front.addEventListener('pointermove',e=>{
+   if(!down||e.pointerId!==down.id)return;
+   const dx=e.clientX-down.x,dy=e.clientY-down.y;
+   if(Math.abs(dx)>7||Math.abs(dy)>7)clearPress();
+   if(!swiping&&Math.abs(dx)>9&&Math.abs(dx)>Math.abs(dy)*1.2){swiping=true;row.classList.add('weightTracking');}
+   if(!swiping)return;
+   const px=Math.min(revealWidth,Math.max(0,down.width-dx));
+   row.style.setProperty('--weight-reveal',px+'px');row.style.setProperty('--weight-progress',String(px/revealWidth));
+   ignoreClick=true;
+  });
+  const finishSwipe=e=>{
+   if(!down||e.pointerId!==down.id)return;
+   clearPress();
+   if(swiping){
+    const dx=e.clientX-down.x,px=Math.min(76,Math.max(0,down.width-dx));
+    row.classList.remove('weightTracking');row.style.removeProperty('--weight-reveal');row.style.removeProperty('--weight-progress');
+    if(px>=revealWidth/2){
+     for(const other of history.querySelectorAll('.weightSwipeRow.weightOpen'))if(other!==row)other.classList.remove('weightOpen');
+     row.classList.add('weightOpen');
+    }else row.classList.remove('weightOpen');
+    setTimeout(()=>{ignoreClick=false},50);
+   }
+   down=null;swiping=false;
+  };
+  front.addEventListener('pointerup',finishSwipe);
+  front.addEventListener('pointercancel',()=>{clearPress();down=null;swiping=false;row.classList.remove('weightTracking');collapse()});
+  front.addEventListener('contextmenu',e=>e.preventDefault());
+  front.addEventListener('click',()=>{if(editing||ignoreClick)return;if(row.classList.contains('weightOpen'))collapse();else for(const other of history.querySelectorAll('.weightSwipeRow.weightOpen'))other.classList.remove('weightOpen')});
+  del.addEventListener('click',()=>openWeightDeleteDialog(date,del));
  }
 }
+// 点体重记录以外的空白位置，收起左滑删除按钮。
+document.addEventListener('click',e=>{
+ const history=document.getElementById('weightHistory');
+ if(!history||e.target.closest('.weightSwipeRow'))return;
+ for(const row of history.querySelectorAll('.weightSwipeRow.weightOpen'))row.classList.remove('weightOpen');
+});
 const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const formatWeightDate=d=>d.replaceAll('-','/');
 let datePickerYear=now.getFullYear(),datePickerMonth=now.getMonth();
@@ -465,12 +634,13 @@ setWeightDate(todayKey());
   if(saving)return;
   const date=document.getElementById('weightDate').value;
   const raw=input.value.trim().replace(',','.');
-  const value=Number(raw);
+  const inputNumber=Number(raw);
+  const value=roundWeight(inputNumber);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
     showWeightError('请选择有效日期');return;
   }
-  if(!raw||!Number.isFinite(value)||value<1||value>500||Math.abs(value*10-Math.round(value*10))>1e-7){
-    showWeightError('请输入 1–500 kg 的体重，最多保留一位小数');return;
+  if(!raw||!Number.isFinite(inputNumber)||inputNumber<1||inputNumber>500){
+    showWeightError('请输入 1–500 kg 的有效体重');return;
   }
   saving=true;
   try{
