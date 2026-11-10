@@ -711,6 +711,14 @@ setWeightDate(todayKey());
  const status=document.getElementById('weightError');
  let saving=false;
  function showWeightError(message){status.textContent=message;status.classList.remove('success')}
+ // Clicking anywhere outside the message and Save button dismisses an old error.
+ // Ignore Save itself so a newly displayed validation error stays visible.
+ document.addEventListener('click',event=>{
+  if(!status.textContent)return;
+  if(event.target.closest('.weightSave')||status.contains(event.target))return;
+  status.textContent='';
+  status.classList.remove('success');
+ });
  function submitWeight(event){
   event?.preventDefault();
   if(saving)return;
