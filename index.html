@@ -337,21 +337,69 @@ let trainingOrder=(()=>{try{return cleanOrder(JSON.parse(localStorage.getItem(OR
 let openedTrainingRow=null;
 let movingTrainingRow=null;
 function saveOrder(){try{localStorage.setItem(ORDER_KEY,JSON.stringify(trainingOrder))}catch(e){console.warn('排序保存失败',e)}notifyChange('order')}
-function registerCustom(type){if(hiddenTraining.includes(type)){hiddenTraining=hiddenTraining.filter(t=>t!==type);saveHidden()}if(!trainingOrder.includes(type)){trainingOrder.push(type);saveOrder()}}
+function registerCustom(type){
+ if(!trainingOrder.includes(type)){
+  // A freshly added project has its own identity, even when an old deleted name is reused.
+  trainingIds[type]=newTrainingId();saveTrainingIds();
+ }
+ if(hiddenTraining.includes(type)){hiddenTraining=hiddenTraining.filter(t=>t!==type);saveHidden()}
+ if(!trainingOrder.includes(type)){trainingOrder.push(type);saveOrder()}
+}
 function orderedTypes(){return cleanOrder(trainingOrder).filter(t=>!hiddenTraining.includes(t))}
 const validType=t=>typeof t==='string'&&t.trim().length>0&&t.length<=60;
+// Stable identities for a training project. Names (including previous names) resolve
+// to the same ID, while a dated record keeps the exact label used when it was saved.
+const TRAINING_IDS_KEY='fitness-calendar-training-ids-v1';
+const newTrainingId=()=>typeof crypto!=='undefined'&&crypto.randomUUID?'t-'+crypto.randomUUID():'t-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+function cleanTrainingIds(raw){
+ const result={};if(!raw||typeof raw!=='object'||Array.isArray(raw))return result;
+ for(const [name,id] of Object.entries(raw))if(validType(name)&&typeof id==='string'&&id.length>1&&id.length<110)result[name]=id;
+ return result;
+}
+let trainingIds=(()=>{try{return cleanTrainingIds(JSON.parse(localStorage.getItem(TRAINING_IDS_KEY)||'{}'))}catch{return {}}})();
+function idForTraining(name){if(!validType(name))return null;return trainingIds[name]||(trainingIds[name]=newTrainingId())}
+function saveTrainingIds(notify=false){
+ try{localStorage.setItem(TRAINING_IDS_KEY,JSON.stringify(trainingIds))}catch(e){console.warn('项目标识保存失败',e)}
+ if(notify)notifyChange('order');
+}
+// Compatibility for the user's existing rename, made before IDs were introduced.
+// Only merge this specific, confirmed old/new pair when the old label is hidden.
+if(hiddenTraining.includes('单杠引体')&&trainingOrder.includes('引体向上')&&!hiddenTraining.includes('引体向上')){
+ const sameId=trainingIds['单杠引体']||trainingIds['引体向上']||newTrainingId();
+ trainingIds['单杠引体']=sameId;trainingIds['引体向上']=sameId;
+}
+for(const name of trainingOrder)idForTraining(name);
+saveTrainingIds();
 // 同一日期可保存多个训练项目，兼容旧版 {type,done} 数据。
 function entryTypes(entry){
  if(!entry||typeof entry!=='object')return [];
  const raw=Array.isArray(entry.types)?entry.types:(validType(entry.type)?[entry.type]:[]);
  return [...new Set(raw.filter(validType))].slice(0,50);
 }
-function normalEntry(entry){
- const types=entryTypes(entry);
- return types.length?{type:types[0],types,done:true}:null;
+function entryItems(entry){
+ if(!entry||typeof entry!=='object')return [];
+ const names=Array.isArray(entry.types)?entry.types:(validType(entry.type)?[entry.type]:[]);
+ const ids=Array.isArray(entry.typeIds)?entry.typeIds:[];
+ const seen=new Set(),items=[];
+ for(let i=0;i<names.length;i++){
+  const name=names[i];if(!validType(name))continue;
+  const id=typeof ids[i]==='string'&&ids[i]?ids[i]:idForTraining(name);
+  if(seen.has(id))continue;
+  seen.add(id);items.push({id,name});
+  if(items.length===50)break;
+ }
+ return items;
 }
+function entryHasTraining(entry,name){const id=idForTraining(name);return entryItems(entry).some(item=>item.id===id)}
+function entryFromItems(items){
+ if(!items.length)return null;
+ return {type:items[0].name,types:items.map(item=>item.name),typeIds:items.map(item=>item.id),done:true};
+}
+function normalEntry(entry){return entryFromItems(entryItems(entry))}
+
 let entries={};
 try{let raw=JSON.parse(localStorage.getItem(KEY)||'{}');if(raw&&typeof raw==='object'&&!Array.isArray(raw)){for(const [d,v] of Object.entries(raw)){const item=normalEntry(v);if(/^\d{4}-\d{2}-\d{2}$/.test(d)&&item)entries[d]=item;}}}catch(e){console.warn('读取记录失败',e)}
+try{localStorage.setItem(KEY,JSON.stringify(entries));saveTrainingIds()}catch(e){}
 let weights={};
 function roundWeight(x){return Math.round((Number(x)+Number.EPSILON)*10)/10}
 function validWeight(x){const n=Number(x);return x!==null&&x!==''&&Number.isFinite(n)&&n>=1&&n<=500&&Math.round(n*10)===n*10}
@@ -925,9 +973,10 @@ function render(){
 }
 function chooseTraining(type){
  const id=editing;if(!id||!validType(type))return;
- const current=entryTypes(entries[id]);
- const types=current.includes(type)?current.filter(t=>t!==type):[...current,type];
- if(types.length)entries[id]={type:types[0],types,done:true};else delete entries[id];
+ const current=entryItems(entries[id]);
+ const trainingId=idForTraining(type);
+ const items=current.some(item=>item.id===trainingId)?current.filter(item=>item.id!==trainingId):[...current,{id:trainingId,name:type}];
+ if(items.length)entries[id]=entryFromItems(items);else delete entries[id];
  save();render();renderPicker();
 }
 function moveTraining(type, delta){
@@ -943,7 +992,10 @@ function renameTraining(oldName,newName){
  if(!validType(target))return '请输入 1 至 60 个字符的训练名称';
  if(target===oldName)return '';
  if(trainingOrder.includes(target)&&!hiddenTraining.includes(target))return '训练项目名称已存在';
- // Only rename the selectable training option. Existing dated records keep their original names.
+ // Preserve the stable ID and old aliases; historical labels stay untouched.
+ const oldId=idForTraining(oldName);
+ trainingIds[target]=oldId;
+ saveTrainingIds();
  trainingOrder=trainingOrder.map(t=>t===oldName?target:t);
  trainingOrder=[...new Set(trainingOrder)];
  // The old name may still appear in history, so hide it from the selectable list.
@@ -968,7 +1020,7 @@ function renderPicker(){
   const move=document.createElement('button');move.type='button';move.className='swipeMove';move.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"></path><path d="M5 12h14"></path><path d="M5 17h14"></path></svg>';move.setAttribute('aria-label','移动训练项目：'+type);
   const remove=document.createElement('button');remove.type='button';remove.className='swipeDelete';remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>';remove.setAttribute('aria-label','删除训练项目：'+type);
   actions.append(move,remove);
-  const active=entryTypes(entries[id]).includes(type);const front=document.createElement('button');front.type='button';front.className='option swipeFront'+(active?' active':'');front.textContent=(active?'✓  ':'')+type;front.setAttribute('aria-pressed',String(active));
+  const active=entryHasTraining(entries[id],type);const front=document.createElement('button');front.type='button';front.className='option swipeFront'+(active?' active':'');front.textContent=(active?'✓  ':'')+type;front.setAttribute('aria-pressed',String(active));
   front.setAttribute('aria-label',type+'，向左滑动可移动或删除');
   let suppressClickUntil=0;
   let pressTimer=null,pressOrigin=null;
@@ -1284,8 +1336,8 @@ el('todayBtn').onclick=()=>{
  const diff=(today.getFullYear()-year)*12+(today.getMonth()-month);
  navigateMainCalendar(today.getFullYear(),today.getMonth(),Math.sign(diff)||1);
 };
-el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,theme,viewMode,trainingOrder,hiddenTraining},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
+el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,theme,viewMode,trainingOrder,hiddenTraining,trainingIds},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');if(data.trainingIds&&typeof data.trainingIds==='object'){trainingIds={...trainingIds,...cleanTrainingIds(data.trainingIds)};saveTrainingIds()}let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}for(const t of trainingOrder)idForTraining(t);saveTrainingIds(true);if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
 render();
 </script>
 <script type="module">
@@ -1344,6 +1396,12 @@ function applyRemote(remote){
  if(!pending.theme&&remote.theme){theme={...DEFAULT_THEME,...cleanTheme(remote.theme)};applyTheme();localStorage.setItem(THEME_KEY,JSON.stringify(theme))}
  if(!pending.order&&Array.isArray(remote.trainingOrder)){trainingOrder=cleanOrder(remote.trainingOrder);localStorage.setItem(ORDER_KEY,JSON.stringify(trainingOrder))}
  if(!pending.order&&Array.isArray(remote.hiddenTraining)){hiddenTraining=remote.hiddenTraining.filter(t=>validType(t));localStorage.setItem(HIDDEN_KEY,JSON.stringify(hiddenTraining))}
+ if(!pending.order&&remote.trainingIds){
+  // Keep locally known aliases as well as the cloud mapping.
+  trainingIds={...cleanTrainingIds(remote.trainingIds),...trainingIds};
+  for(const name of trainingOrder)idForTraining(name);
+  saveTrainingIds();
+ }
  if(!pending.view&&(remote.viewMode==='month'||remote.viewMode==='list')){viewMode=remote.viewMode;localStorage.setItem(VIEW_KEY,viewMode)}
  render();
 }
@@ -1356,7 +1414,7 @@ async function sync(){
   const ref=doc(db,'users',currentUser);
   const firstSync=!localStorage.getItem('fitness-calendar-initial-'+currentUser);
   const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||Object.keys(patch.weights).length||firstSync;
-  const local=copy(entries);const localWeights=copy(weights);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);
+  const local=copy(entries);const localWeights=copy(weights);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);const currentTrainingIds=copy(trainingIds);
   let latest;
   if(hasPatch){
    latest=await runTransaction(db,async tx=>{
@@ -1370,7 +1428,7 @@ async function sync(){
      if(!snap.exists())Object.assign(mergedWeights,cleanWeights(localWeights));
      else if(firstSync){for(const [k,v] of Object.entries(cleanWeights(localWeights)))if(!(k in mergedWeights))mergedWeights[k]=v}
      for(const [k,v] of Object.entries(patch.weights))if(isDate(k)){if(v===null)delete mergedWeights[k];else if(validWeight(v))mergedWeights[k]=Number(v)}
-     const result={entries:merged,weights:mergedWeights,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],updatedAt:Date.now()};
+     const result={entries:merged,weights:mergedWeights,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],trainingIds:patch.order||!snap.exists()?currentTrainingIds:remote.trainingIds||currentTrainingIds,updatedAt:Date.now()};
     tx.set(ref,result);return result;
    });
    // Never discard changes created during the asynchronous upload.
@@ -1378,12 +1436,12 @@ async function sync(){
     for(const [k,v] of Object.entries(patch.weights))if(JSON.stringify(pending.weights[k])===JSON.stringify(v))delete pending.weights[k];
    if(patch.theme&&JSON.stringify(theme)===JSON.stringify(currentTheme))pending.theme=false;
    if(patch.view&&viewMode===currentView)pending.view=false;
-   if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden))pending.order=false;
+   if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden)&&JSON.stringify(trainingIds)===JSON.stringify(currentTrainingIds))pending.order=false;
    storePending();
   }else{
    const snap=await getDoc(ref);
    if(!snap.exists()){
-    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,updatedAt:Date.now()};tx.set(ref,result);return result});
+    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,trainingIds:currentTrainingIds,updatedAt:Date.now()};tx.set(ref,result);return result});
    }else latest=snap.data();
   }
   if(user?.uid!==currentUser)return;
