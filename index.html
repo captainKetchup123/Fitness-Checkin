@@ -230,6 +230,18 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
 @keyframes weightConfirmFade{from{opacity:0}to{opacity:1}}
 @keyframes weightConfirmEnter{from{opacity:0;transform:scale(.96) translateY(7px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @media(prefers-reduced-motion:reduce){.weightDeleteBackdrop,.weightDeleteCard{animation:none}}
+
+/* v88: fixed training picker header / add button / finish; middle scrolls independently */
+#panel{align-items:center;padding:max(8px,env(safe-area-inset-top)) 10px max(8px,env(safe-area-inset-bottom))}
+#panel .sheet{display:flex;flex-direction:column;overflow:hidden;min-height:0;height:min(780px,calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)));max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:16px 14px 12px}
+#panel .pickerHead{flex:none;margin:0 4px 12px;padding:2px 0 3px}
+#panel .trainingScroll{flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#panel .pickerFooter{flex:none;display:flex;flex-direction:column;gap:0;margin-top:0;padding-top:10px;background:var(--picker)}
+#panel .trainingAddDock{flex:none}
+#panel .trainingAddDock>.addTraining{min-height:58px;margin:0 0 3px;padding:9px 12px}
+#panel .pickerFooter .cancel{flex:none;width:100%;min-height:43px;padding:9px 13px}
+#panel .trainingAddDock .addTrainingForm{padding:2px 3px 6px}
+@media(max-width:600px){#panel .sheet{width:100%;height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:14px 12px 10px}#panel .pickerHead{margin-bottom:10px}#panel .trainingAddDock>.addTraining{min-height:54px}#panel .pickerFooter .cancel{min-height:40px}}
 </style>
 </head>
 <body><main class="app">
@@ -281,7 +293,7 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
  <div class="datePickerHeader"><div class="datePickerTitle" id="datePickerTitle"></div><div class="datePickerArrows"><button id="datePrevYear" type="button" aria-label="上一年">«</button><button id="datePrev" type="button" aria-label="上个月">‹</button><button id="dateNext" type="button" aria-label="下个月">›</button><button id="dateNextYear" type="button" aria-label="下一年">»</button></div></div>
  <div class="dateGridStage" id="dateGridStage"><div class="datePickerGrid" id="datePickerGrid"></div></div><div class="datePickerFooter"><button id="dateToday" type="button">今天</button><button id="dateClose" type="button">取消</button></div>
  </div></div>
-<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="sheet"><div class="pickerHead"><h2 id="dialogTitle">选择训练</h2></div><div id="options"></div><div class="pickerFooter"><button class="cancel" id="cancel">完成</button></div></div></div>
+<div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="sheet"><div class="pickerHead"><h2 id="dialogTitle">选择训练</h2></div><div id="options" class="trainingScroll"></div><div class="pickerFooter"><div id="trainingAddDock" class="trainingAddDock"></div><button class="cancel" id="cancel">完成</button></div></div></div>
 <div class="panel" id="themePanel" role="dialog" aria-modal="true" aria-labelledby="themeTitle"><div class="sheet themeSheet"><h2 id="themeTitle">🎨 自定义颜色</h2><p class="themeIntro">选择预设主题，或点颜色方块逐项调整。修改立即生效并自动保存。</p><div class="themePresets" id="presets"></div><div id="colorRows"></div><div class="themeActions"><button class="secondary" id="resetTheme">恢复默认</button><button class="secondary" id="closeTheme">完成</button></div><p class="themeNote">登录 Google 后配色也会同步到云端；JSON 备份同时包含配色。</p></div></div>
 
 <script>
@@ -945,7 +957,7 @@ let closeTrainingInlineEditor=null;
 function renderPicker(){
  if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}
  const id=editing;if(!id)return;
- const options=el('options');options.replaceChildren();
+ const options=el('options');options.replaceChildren();const addDock=el('trainingAddDock');addDock.replaceChildren();
  const fromHistory=Object.values(entries).flatMap(entryTypes).filter(x=>!TYPES.includes(x));
  for(const t of fromHistory)if(!trainingOrder.includes(t))trainingOrder.push(t);
  const ordered=orderedTypes();
@@ -1097,12 +1109,11 @@ function renderPicker(){
     const siblings=[...options.children];
     const oldIndex=siblings.indexOf(drag.placeholder);
     // The add-training (+) button is a fixed footer, not a sortable target.
-    const addButton=options.querySelector('.addTraining, .addTrainingForm');
-    const targetIndex=destination?siblings.indexOf(destination):(addButton?siblings.indexOf(addButton):siblings.length);
+    const targetIndex=destination?siblings.indexOf(destination):siblings.length;
     if(targetIndex===oldIndex||targetIndex===oldIndex+1)return;
     const before=new Map(candidates.map(item=>[item,item.getBoundingClientRect()]));
     if(destination)options.insertBefore(drag.placeholder,destination);
-    else options.insertBefore(drag.placeholder,addButton);
+    else options.append(drag.placeholder);
     for(const candidate of candidates){
       const prev=before.get(candidate),next=candidate.getBoundingClientRect();
       const dy=prev.top-next.top;
@@ -1155,14 +1166,13 @@ function renderPicker(){
     if(!drag.started&&Math.abs(dy)>7)startDrag();
     if(!drag.started)return;
     // Keep the floating training card above the fixed (+) row.
-    const addButton=options.querySelector('.addTraining, .addTrainingForm');
-    const addTop=addButton?.getBoundingClientRect().top;
-    const maxTop=addTop===undefined?Infinity:addTop-drag.height-8;
+    const addTop=addDock.getBoundingClientRect().top;
+    const maxTop=addTop-drag.height-8;
     drag.ghost.style.top=Math.min(drag.top+dy,maxTop)+'px';
     reorderPlaceholder(e.clientY);
     // 贴近选择窗口边缘时滚动，方便调整长列表。
-    const sheet=options.closest('.sheet');
-    if(sheet){const r=sheet.getBoundingClientRect();if(e.clientY<r.top+65)sheet.scrollTop-=9;else if(e.clientY>r.bottom-65)sheet.scrollTop+=9;}
+    const r=options.getBoundingClientRect();
+    if(e.clientY<r.top+48)options.scrollTop-=10;else if(e.clientY>r.bottom-48)options.scrollTop+=10;
     e.preventDefault();
   });
   move.addEventListener('pointerup',e=>{if(drag?.id===e.pointerId)finishDrag(false)});
@@ -1194,9 +1204,9 @@ function renderPicker(){
    const commit=()=>{const t=input.value.trim();if(!t){input.focus();return}registerCustom(t);renderPicker()};
    saveBtn.onclick=commit;input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commit()}if(e.key==='Escape'){e.stopPropagation();renderPicker()}});
    cancelBtn.onclick=()=>renderPicker();actionBar.append(saveBtn,cancelBtn);form.append(input,actionBar);add.replaceWith(form);input.focus();
- };options.append(add);
+ };addDock.append(add);
 }
-function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('panel').classList.add('show')}
+function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('options').scrollTop=0;el('panel').classList.add('show')}
 function hidePicker(){if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show')}
 el('monthView').onclick=()=>setView('month');el('listView').onclick=()=>setView('list');
 
