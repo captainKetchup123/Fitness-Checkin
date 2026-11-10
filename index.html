@@ -47,6 +47,16 @@
 .listMode .holidayLabel{line-height:1.25}
 @media(max-width:600px){.dateHeading{gap:2px}.holidayLabels{gap:1px 2px;padding-top:0;align-items:center}.holidayLabel{font-size:9px;line-height:1.2}.listMode .dateHeading{width:135px;align-items:center}.listMode .holidayLabels{padding-top:0;align-items:center}.listMode .holidayLabel{font-size:10px}}
 @media(max-width:365px){.holidayLabel{font-size:8px}.listMode .dateHeading{width:115px}}
+/* v80: 节日完整名称单行显示；月历窄格自适应横向缩放，不覆盖相邻日期 */
+.calendar:not(.listMode) .holidayLabels{flex-wrap:nowrap;gap:2px;overflow:hidden;white-space:nowrap}
+.calendar:not(.listMode) .holidayLabel{display:block;flex:0 0 auto;overflow:hidden;white-space:nowrap;overflow-wrap:normal;line-height:1.2}
+.calendar:not(.listMode) .holidayLabelText{display:inline-block;white-space:nowrap;transform-origin:left center;vertical-align:middle}
+.calendar.listMode .holidayLabel{overflow-wrap:anywhere}
+/* v82: 意大利节日在月历中独占日期与训练按钮之间的一行，中文节日仍跟随日期 */
+.calendar:not(.listMode) .holidayItRow{width:100%;min-width:0;display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;flex:0 0 15px;height:15px;min-height:15px;line-height:1.2}
+.calendar:not(.listMode) .holidayItRow .holidayLabel{display:inline-block;flex:0 0 auto;line-height:1.2;text-align:center}
+.calendar:not(.listMode) .holidayItRow .holidayLabelText{transform-origin:left center}
+
 /* 底部导航与体重记录 */
 [hidden]{display:none!important}
 .app{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
@@ -188,10 +198,10 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
 .weightSwipeRow{--weight-reveal:0px;--weight-progress:0;display:flex;gap:0;align-items:stretch;min-height:83px;overflow:hidden;border-bottom:1px solid var(--border);touch-action:pan-y}
 .weightSwipeRow:last-child{border-bottom:0}
 .weightSwipeFront{flex:1 1 0;min-width:0;display:flex;align-items:center;justify-content:space-between;padding:14px 0;touch-action:pan-y;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer}
-.weightSwipeActions{flex:0 0 var(--weight-reveal);width:var(--weight-reveal);min-width:0;display:flex;align-items:stretch;overflow:hidden;box-sizing:border-box;gap:0;padding:0}
+.weightSwipeActions{flex:0 0 var(--weight-reveal);width:var(--weight-reveal);min-width:0;display:flex;align-items:stretch;overflow:hidden;box-sizing:border-box;gap:0;padding:0;background:#d65d55}
 .weightSwipeRow:not(.weightTracking) .weightSwipeActions{transition:flex-basis .42s cubic-bezier(.22,1,.36,1),width .42s cubic-bezier(.22,1,.36,1),padding-left .42s cubic-bezier(.22,1,.36,1)}
 .weightSwipeRow.weightOpen{--weight-reveal:76px;--weight-progress:1}
-.weightSwipeActions button{flex:1;min-width:0;position:relative;z-index:2;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:0;border-radius:0 12px 12px 0;background:#d65d55;color:#ffffff;font:inherit;display:flex;align-items:center;justify-content:center;opacity:var(--weight-progress);transition:opacity .3s cubic-bezier(.22,1,.36,1);cursor:pointer}
+.weightSwipeActions button{flex:1;min-width:0;position:relative;z-index:2;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border:0;border-radius:0;background:transparent;color:#ffffff;font:inherit;display:flex;align-items:center;justify-content:center;opacity:var(--weight-progress);transition:opacity .3s cubic-bezier(.22,1,.36,1);cursor:pointer}
 .weightSwipeRow.weightTracking .weightSwipeActions button{transition:none}
 .weightSwipeActions svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
 .weightValue:has(.weightInlineInput){display:flex;align-items:center;gap:7px;white-space:nowrap}.weightInlineInput{flex:0 1 130px;min-width:0;width:min(130px,100%);font:inherit;font-size:19px;font-weight:700;color:var(--text);background:var(--pickbg);border:1px solid var(--yellow);border-radius:8px;padding:5px 8px;outline:none;user-select:text;-webkit-user-select:text;-webkit-touch-callout:default}
@@ -199,14 +209,15 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
 
 /* v67: 体重历史固定两列、每列10行，按列从新到旧排列 */
 #weightHistory:has(.weightSwipeRow){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(var(--weight-visible-rows,1),minmax(0,auto));grid-auto-flow:column;column-gap:10px;row-gap:6px;align-items:stretch;align-content:start}
-#weightHistory .weightSwipeRow{min-width:0;min-height:62px;height:62px;margin:0;border:1px solid var(--border);border-radius:11px;background:var(--card)}
+#weightHistory .weightSwipeRow{min-width:0;min-height:62px;height:62px;margin:0;border:1px solid var(--border);border-radius:11px;background:var(--card);box-shadow:none;isolation:isolate}
 #weightHistory .weightSwipeFront{padding:7px 11px;min-width:0}
 #weightHistory .weightSwipeFront>div{min-width:0}
 #weightHistory .weightDate{font-size:11px;line-height:1.2;white-space:nowrap}
 #weightHistory .weightValue{font-size:17px;line-height:1.25;margin-top:3px;white-space:nowrap}
-#weightHistory .weightSwipeActions{padding:0}
+#weightHistory .weightSwipeActions{padding:0;background:#d65d55;border-top-right-radius:11px;border-bottom-right-radius:11px}
+#weightHistory .weightSwipeActions button{height:100%}
 #weightHistory .weightInlineInput{width:90px;flex:0 1 90px;padding:5px 5px;font-size:18px}
-@media(max-width:420px){#weightHistory:has(.weightSwipeRow){column-gap:8px;row-gap:6px}#weightHistory .weightSwipeRow{min-height:58px;height:58px;border-radius:10px}#weightHistory .weightSwipeFront{padding:6px 8px}#weightHistory .weightDate{font-size:10.5px}#weightHistory .weightValue{font-size:16px}#weightHistory .weightSwipeRow.weightOpen{--weight-reveal:60px;--weight-progress:1}#weightHistory .weightInlineInput{width:75px;flex-basis:75px;font-size:16px}}
+@media(max-width:420px){#weightHistory:has(.weightSwipeRow){column-gap:8px;row-gap:6px}#weightHistory .weightSwipeRow{min-height:58px;height:58px;border-radius:10px}#weightHistory .weightSwipeFront{padding:6px 8px}#weightHistory .weightDate{font-size:10.5px}#weightHistory .weightValue{font-size:16px}#weightHistory .weightSwipeRow.weightOpen{--weight-reveal:60px;--weight-progress:1}#weightHistory .weightInlineInput{width:75px;flex-basis:75px;font-size:16px}#weightHistory .weightSwipeActions{border-top-right-radius:10px;border-bottom-right-radius:10px}}
 
 /* 体重记录删除确认弹窗 */
 .weightDeleteBackdrop{position:fixed;inset:0;z-index:80;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px;animation:weightConfirmFade .18s ease-out}
@@ -434,27 +445,54 @@ let weightHistoryCollapsed=false;
 try{weightHistoryCollapsed=localStorage.getItem(WEIGHT_HISTORY_COLLAPSED_KEY)==='1'}catch(e){}
 const weightHistoryCard=document.getElementById('weightHistoryCard');
 const weightHistoryToggle=document.getElementById('weightHistoryToggle');
+const weightHistoryBody=document.getElementById('weightHistoryBody');
+// v86: single synchronized scroll animation (no stacked smooth-scroll requests).
+let weightHistoryFollowFrame=0;
+function stopWeightHistoryFollow(){
+ if(weightHistoryFollowFrame){cancelAnimationFrame(weightHistoryFollowFrame);weightHistoryFollowFrame=0;}
+}
 function applyWeightHistoryCollapsed(){
  const expanded=!weightHistoryCollapsed;
  weightHistoryToggle.setAttribute('aria-expanded',String(expanded));
  weightHistoryToggle.setAttribute('aria-label',expanded?'收起体重历史':'展开体重历史');
  weightHistoryCard.classList.toggle('collapsed',!expanded);
 }
+function followWeightHistory(expanding){
+ stopWeightHistoryFollow();
+ const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+ const initialY=window.scrollY;
+ const cardTop=initialY+weightHistoryCard.getBoundingClientRect().top;
+ const destination=expanding?Math.max(0,cardTop-16):Math.min(initialY,Math.max(0,cardTop-16));
+ if(reduced){
+  requestAnimationFrame(()=>window.scrollTo({top:Math.min(destination,Math.max(0,document.documentElement.scrollHeight-window.innerHeight)),behavior:'instant'}));
+  return;
+ }
+ // Accordion runs 620ms. Move the page with it in one rAF-controlled trajectory.
+ const duration=620;
+ let startTime=null;
+ const step=(time)=>{
+  if(startTime===null)startTime=time;
+  const t=Math.min(1,(time-startTime)/duration);
+  const eased=1-Math.pow(1-t,3);
+  // The available scroll range grows while the history expands.
+  const maxScroll=Math.max(0,document.documentElement.scrollHeight-window.innerHeight);
+  const desired=initialY+(destination-initialY)*eased;
+  window.scrollTo({top:Math.max(0,Math.min(maxScroll,desired)),behavior:'instant'});
+  if(t<1)weightHistoryFollowFrame=requestAnimationFrame(step);
+  else weightHistoryFollowFrame=0;
+ };
+ weightHistoryFollowFrame=requestAnimationFrame(step);
+}
 function setWeightHistoryCollapsed(next){
+ const wasCollapsed=weightHistoryCollapsed;
  weightHistoryCollapsed=!!next;
  try{localStorage.setItem(WEIGHT_HISTORY_COLLAPSED_KEY,weightHistoryCollapsed?'1':'0')}catch(e){}
  applyWeightHistoryCollapsed();
- // Move the viewport with the expanding history so records appear without manual scrolling.
- // The section's top is stable while its content grows, so this scroll target does not jump.
- requestAnimationFrame(()=>{
-  const rect=weightHistoryCard.getBoundingClientRect();
-  const desiredTop=16;
-  const shouldFollow=!weightHistoryCollapsed || rect.top<0 || rect.top>window.innerHeight-90;
-  if(!shouldFollow)return;
-  const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.scrollTo({top:Math.max(0,window.scrollY+rect.top-desiredTop),behavior:reduceMotion?'instant':'smooth'});
- });
+ followWeightHistory(wasCollapsed&&!weightHistoryCollapsed);
 }
+// Stop automatically following if the user starts scrolling manually.
+window.addEventListener('touchstart',stopWeightHistoryFollow,{passive:true});
+window.addEventListener('wheel',stopWeightHistoryFollow,{passive:true});
 weightHistoryToggle.addEventListener('click',()=>setWeightHistoryCollapsed(!weightHistoryCollapsed));
 applyWeightHistoryCollapsed();
 let pendingWeightDeleteDate=null;
@@ -795,6 +833,31 @@ function updateStats(){
  el('statsRange').textContent=days?`首次：${completed[0]}　最新：${completed[days-1]}`:'尚无打卡记录';
 }
 function setView(mode){viewMode=mode;try{localStorage.setItem(VIEW_KEY,mode)}catch(e){}render();notifyChange('view')}
+function fitMonthHolidayLabels(){
+ const grid=document.getElementById('calendar');
+ if(!grid||grid.classList.contains('listMode'))return;
+ for(const group of grid.querySelectorAll('.holidayLabels')){
+  const labels=[...group.querySelectorAll('.holidayLabel')];
+  const available=group.clientWidth;
+  if(!labels.length||available<=0)continue;
+  const gap=labels.length>1?2*(labels.length-1):0;
+  const usable=Math.max(1,available-gap);
+  const sizes=labels.map(label=>{
+   const inner=label.querySelector('.holidayLabelText');
+   inner.style.transform='none';
+   label.style.width='auto';
+   return Math.max(1,inner.scrollWidth);
+  });
+  const total=sizes.reduce((a,b)=>a+b,0);
+  const factor=Math.min(1,usable/total);
+  labels.forEach((label,i)=>{
+   const inner=label.querySelector('.holidayLabelText');
+   label.style.width=(sizes[i]*factor)+'px';
+   inner.style.transform=factor<.999?`scaleX(${factor})`:'none';
+  });
+ }
+}
+window.addEventListener('resize',()=>requestAnimationFrame(fitMonthHolidayLabels),{passive:true});
 function render(){
  updateStats();
  el('monthView').classList.toggle('active',viewMode==='month');el('listView').classList.toggle('active',viewMode==='list');
@@ -802,24 +865,43 @@ function render(){
  el('month').textContent=`${year} 年 ${month+1} 月`;const grid=el('calendar');grid.classList.toggle('listMode',viewMode==='list');grid.replaceChildren();
  for(const wd of ['一','二','三','四','五','六','日']){let cell=document.createElement('div');cell.className='weekday';cell.textContent=wd;grid.append(cell)}
  const offset=(new Date(year,month,1).getDay()+6)%7;for(let i=0;i<offset;i++){let cell=document.createElement('div');cell.className='day empty';grid.append(cell)}
- const n=new Date(year,month+1,0).getDate();for(let d=1;d<=n;d++){
+ const n=new Date(year,month+1,0).getDate();
+ // 同一周只要有意大利节日，所有日期都预留同高的节日行，使训练按钮横向对齐。
+ const weeksWithItalianHolidays=new Set();
+ if(viewMode==='month')for(let d=1;d<=n;d++){
+  if(holidaysFor(year,month+1,d).some(h=>h.country==='it'))weeksWithItalianHolidays.add(Math.floor((offset+d-1)/7));
+ }
+ for(let d=1;d<=n;d++){
   const id=key(year,month,d),item=entries[id],types=entryTypes(item),selected=types.length>0,isToday=year===now.getFullYear()&&month===now.getMonth()&&d===now.getDate();
   const box=document.createElement('div');box.className='day'+(isToday?' current':'');
   const num=document.createElement('div');num.className='number';num.textContent=d;if(isToday){let mark=document.createElement('em');mark.textContent='今';num.append(mark)}
   const pick=document.createElement('button');pick.type='button';const restOnly=types.length===1&&types[0]==='休息';pick.className=selected?(restOnly?'pick restDay':'pick selected'):'pick';if(types.length>1)pick.classList.add('multiSelected');pick.textContent=selected?types.join('\n'):'＋ 选择';pick.setAttribute('aria-label',`${id} 选择训练：${types.join('、')||'未选择'}`);pick.addEventListener('click',()=>showPicker(id));
   const heading=document.createElement('div');heading.className='dateHeading';heading.append(num);
   const holidays=holidaysFor(year,month+1,d);
-  if(holidays.length){
+  // 月历里意大利节日单独放在日期与训练选项之间；列表模式仍与日期同一行。
+  const inlineHolidays=holidays.filter(h=>viewMode==='list'||h.country!=='it');
+  const belowHolidays=viewMode==='month'?holidays.filter(h=>h.country==='it'):[];
+  const makeHolidayLabel=holiday=>{
+   const label=document.createElement('span');label.className='holidayLabel '+holiday.country;
+   label.title=holiday.label;
+   const text=document.createElement('span');text.className='holidayLabelText';text.textContent=holiday.label;
+   label.append(text);return label;
+  };
+  if(inlineHolidays.length){
    const labels=document.createElement('div');labels.className='holidayLabels';
-   for(const holiday of holidays){
-    const label=document.createElement('span');label.className='holidayLabel '+holiday.country;
-    label.textContent=holiday.label;
-    labels.append(label);
-   }
+   for(const holiday of inlineHolidays)labels.append(makeHolidayLabel(holiday));
    heading.append(labels);
   }
-  box.append(heading,pick);grid.append(box);
+  box.append(heading);
+  if(viewMode==='month'&&weeksWithItalianHolidays.has(Math.floor((offset+d-1)/7))){
+   const italianRow=document.createElement('div');italianRow.className='holidayItRow holidayLabels';
+   for(const holiday of belowHolidays)italianRow.append(makeHolidayLabel(holiday));
+   if(!belowHolidays.length)italianRow.setAttribute('aria-hidden','true');
+   box.append(italianRow);
+  }
+  box.append(pick);grid.append(box);
  }
+ requestAnimationFrame(fitMonthHolidayLabels);
 }
 function chooseTraining(type){
  const id=editing;if(!id||!validType(type))return;
