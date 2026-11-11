@@ -250,6 +250,21 @@ html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjus
 #panel .pickerFooter .cancel{flex:none;width:100%;min-height:43px;padding:9px 13px}
 #panel .trainingAddDock .addTrainingForm{padding:2px 3px 6px}
 @media(max-width:600px){#panel .sheet{width:100%;height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));padding:14px 12px 10px}#panel .pickerHead{margin-bottom:10px}#panel .trainingAddDock>.addTraining{min-height:54px}#panel .pickerFooter .cancel{min-height:40px}}
+
+/* v91: more accessible pinned training picker footer and prevent background scroll */
+body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
+#panel{overscroll-behavior:contain;touch-action:pan-y}
+#panel .sheet{overscroll-behavior:contain}
+#panel .trainingScroll{overscroll-behavior-y:contain}
+#panel .pickerFooter{gap:8px;padding-top:8px;padding-bottom:3px}
+#panel .trainingAddDock>.addTraining{min-height:50px;margin:0;padding:6px 12px;line-height:1.2}
+#panel .pickerFooter .cancel{min-height:58px;padding:12px 15px;border-radius:12px;font-size:18px;font-weight:650;background:var(--surface);color:var(--text)}
+@media(max-width:600px){
+ #panel .sheet{padding-bottom:22px}
+ #panel .pickerFooter{gap:10px;padding-top:8px;padding-bottom:0}
+ #panel .trainingAddDock>.addTraining{min-height:50px}
+ #panel .pickerFooter .cancel{min-height:58px;font-size:18px}
+}
 </style>
 </head>
 <body><main class="app">
@@ -1266,8 +1281,44 @@ function renderPicker(){
    cancelBtn.onclick=()=>renderPicker();actionBar.append(saveBtn,cancelBtn);form.append(input,actionBar);add.replaceWith(form);input.focus();
  };addDock.append(add);
 }
-function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('options').scrollTop=0;el('panel').classList.add('show')}
-function hidePicker(){if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show')}
+// Keep iOS Safari from scrolling the calendar behind an open training sheet.
+let pickerSavedScrollY=null;
+let pickerBodyStyle=null;
+function lockTrainingPickerBackground(){
+ if(pickerSavedScrollY!==null)return;
+ pickerSavedScrollY=window.scrollY;
+ pickerBodyStyle={position:document.body.style.position,top:document.body.style.top,width:document.body.style.width,overflow:document.body.style.overflow};
+ document.body.classList.add('trainingPickerLocked');
+ document.body.style.position='fixed';
+ document.body.style.top=`-${pickerSavedScrollY}px`;
+ document.body.style.width='100%';
+ document.body.style.overflow='hidden';
+}
+function unlockTrainingPickerBackground(){
+ if(pickerSavedScrollY===null)return;
+ const y=pickerSavedScrollY;
+ pickerSavedScrollY=null;
+ document.body.classList.remove('trainingPickerLocked');
+ Object.assign(document.body.style,pickerBodyStyle);
+ pickerBodyStyle=null;
+ window.scrollTo({top:y,left:0,behavior:'instant'});
+}
+// Prevent scroll chaining at the edges of the training list (including on iOS).
+let pickerTouchY=null;
+el('panel').addEventListener('touchstart',e=>{pickerTouchY=e.touches[0]?.clientY??null},{passive:true});
+el('panel').addEventListener('touchmove',e=>{
+ if(!el('panel').classList.contains('show')||!e.cancelable)return;
+ const scroll=e.target.closest('.trainingScroll');
+ if(!scroll){e.preventDefault();return;}
+ if(pickerTouchY===null)return;
+ const y=e.touches[0]?.clientY??pickerTouchY;
+ const delta=y-pickerTouchY;
+ pickerTouchY=y;
+ const max=scroll.scrollHeight-scroll.clientHeight;
+ if(max<=1 || (delta>0&&scroll.scrollTop<=0) || (delta<0&&scroll.scrollTop>=max-1))e.preventDefault();
+},{passive:false});
+function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('options').scrollTop=0;lockTrainingPickerBackground();el('panel').classList.add('show')}
+function hidePicker(){if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show');unlockTrainingPickerBackground()}
 el('monthView').onclick=()=>setView('month');el('listView').onclick=()=>setView('list');
 
 function closeMenu(){el('appMenu').hidden=true;el('menuBtn').setAttribute('aria-expanded','false')}
