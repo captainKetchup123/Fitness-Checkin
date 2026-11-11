@@ -265,6 +265,19 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
  #panel .trainingAddDock>.addTraining{min-height:50px}
  #panel .pickerFooter .cancel{min-height:58px;font-size:18px}
 }
+
+/* v92: 手机月历纵向压缩。导航栏维持 v90 尺寸，不修改列表模式。 */
+@media (max-width:600px){
+  body:has(#calendarPage:not([hidden])) .app{padding-top:18px;padding-bottom:calc(66px + env(safe-area-inset-bottom));}
+  body:has(#calendarPage:not([hidden])) header{margin-bottom:18px;}
+  #calendarPage .summary{margin-bottom:12px;padding-top:10px;padding-bottom:10px;}
+  #calendarPage .controls{margin-bottom:14px;}
+  #calendarPage .calendar:not(.listMode){row-gap:2px;}
+  #calendarPage .calendar:not(.listMode) .weekday{padding-top:7px;padding-bottom:10px;}
+  #calendarPage .calendar:not(.listMode) .day:not(.empty){min-height:74px;padding-top:4px;padding-bottom:4px;gap:4px;}
+  #calendarPage .calendar:not(.listMode) .pick{min-height:34px;}
+  #calendarPage .calendar:not(.listMode) .holidayItRow{flex-basis:13px;height:13px;min-height:13px;}
+}
 </style>
 </head>
 <body><main class="app">
