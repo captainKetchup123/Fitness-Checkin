@@ -366,7 +366,10 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
 .workoutColorHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
 .workoutColorHeader h2{font-size:19px;margin:0;color:var(--text)}
 .workoutColorClose{width:36px;height:36px;border:0;border-radius:9px;background:var(--surface);color:var(--text);font-size:24px}
-.workoutColorGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+/* v101: four swatches in the first row, three evenly spaced in the second. */
+.workoutColorGrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:8px}
+.workoutColorGrid>.workoutColorChoice{grid-column:span 3}
+.workoutColorGrid>.workoutColorChoice:nth-child(n+5){grid-column:span 4}
 .workoutColorChoice{min-width:0;min-height:91px;border:1px solid var(--swatch-border);border-radius:13px;background:var(--swatch-bg);color:var(--swatch-fg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:9px 2px;font-size:13px;font-weight:650}
 .workoutColorChoice[aria-pressed="true"]{outline:2px solid var(--text);outline-offset:-2px}
 .workoutColorDot{width:27px;height:27px;border-radius:50%;background:var(--swatch-fg);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
@@ -518,9 +521,10 @@ const WORKOUT_COLORS_KEY='fitness-calendar-workout-colors-v1';
 const WORKOUT_PALETTE={
  red:{label:'胸部红',bg:'#FBE3DE',fg:'#A44C3B',border:'#E6B4AB'},
  blue:{label:'背部蓝',bg:'#E0EBFC',fg:'#376FA8',border:'#B2CAE9'},
- purple:{label:'肩部紫',bg:'#EBE4F8',fg:'#7857A2',border:'#CDBAE9'},
  green:{label:'腿部绿',bg:'#E3F2E5',fg:'#3F8557',border:'#B1D8BA'},
- yellow:{label:'核心黄',bg:'#FFF0CC',fg:'#A16A16',border:'#EACB81'}
+ purple:{label:'肩部紫',bg:'#EBE4F8',fg:'#7857A2',border:'#CDBAE9'},
+ yellow:{label:'核心黄',bg:'#FFF0CC',fg:'#A16A16',border:'#EACB81'},
+ orange:{label:'手臂橙',bg:'#FFE4CE',fg:'#E96D0D',border:'#F1B37E'}
 };
 const WORKOUT_COLOR_DEFAULT={label:'默认',bg:'#F0EDE6',fg:'#292929',border:'#DDD9CE'};
 function cleanWorkoutColors(raw){
