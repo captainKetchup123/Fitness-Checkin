@@ -435,6 +435,12 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
     <div class="weightDeleteButtons"><button type="button" id="weightDeleteCancel">取消</button><button type="button" id="weightDeleteConfirm" class="weightDeleteConfirm">确认</button></div>
   </div>
 </div>
+<div id="recordDeleteDialog" class="weightDeleteBackdrop" role="dialog" aria-modal="true" aria-label="删除训练记录确认" aria-describedby="recordDeleteDescription" hidden>
+  <div class="weightDeleteCard">
+    <p id="recordDeleteDescription"></p>
+    <div class="weightDeleteButtons"><button type="button" id="recordDeleteCancel">取消</button><button type="button" id="recordDeleteConfirm" class="weightDeleteConfirm">确认</button></div>
+  </div>
+</div>
 <div id="dateDialog" class="dateBackdrop" hidden role="dialog" aria-modal="true" aria-label="选择体重记录日期"><div class="datePickerCard">
  <div class="datePickerHeader"><div class="datePickerTitle" id="datePickerTitle"></div><div class="datePickerArrows"><button id="datePrevYear" type="button" aria-label="上一年">«</button><button id="datePrev" type="button" aria-label="上个月">‹</button><button id="dateNext" type="button" aria-label="下个月">›</button><button id="dateNextYear" type="button" aria-label="下一年">»</button></div></div>
  <div class="dateGridStage" id="dateGridStage"><div class="datePickerGrid" id="datePickerGrid"></div></div><div class="datePickerFooter"><button id="dateToday" type="button">今天</button><button id="dateClose" type="button">取消</button></div>
@@ -1073,6 +1079,35 @@ function recordOptionList(select,selectedId,currentName){
  for(const name of names){const opt=document.createElement('option');opt.value=idForTraining(name);opt.textContent=name;select.append(opt)}
  select.value=selectedId;
 }
+// 与体重历史共用删除确认弹窗的视觉样式，不使用浏览器原生 confirm。
+let pendingRecordDelete=null;
+let recordDeleteReturnFocus=null;
+function closeRecordDeleteDialog(){
+ const dialog=document.getElementById('recordDeleteDialog');
+ dialog.hidden=true;pendingRecordDelete=null;
+ if(recordDeleteReturnFocus?.isConnected)recordDeleteReturnFocus.focus({preventScroll:true});
+ recordDeleteReturnFocus=null;
+}
+function openRecordDeleteDialog(id,record,button){
+ pendingRecordDelete=id;recordDeleteReturnFocus=button;
+ document.getElementById('recordDeleteDescription').textContent=`确定删除 ${record.date.replaceAll('-','/')} 的「${record.name}」训练记录吗？`;
+ document.getElementById('recordDeleteDialog').hidden=false;
+ document.getElementById('recordDeleteCancel').focus({preventScroll:true});
+}
+document.getElementById('recordDeleteCancel').addEventListener('click',closeRecordDeleteDialog);
+document.getElementById('recordDeleteConfirm').addEventListener('click',()=>{
+ const id=pendingRecordDelete;
+ if(!id)return;
+ const next={...workoutRecords};delete next[id];
+ if(!saveWorkoutRecords(next))return;
+ closeRecordDeleteDialog();renderRecords();
+});
+document.getElementById('recordDeleteDialog').addEventListener('click',e=>{
+ if(e.target.id==='recordDeleteDialog')closeRecordDeleteDialog();
+});
+document.addEventListener('keydown',e=>{
+ if(e.key==='Escape'&&!document.getElementById('recordDeleteDialog').hidden){e.preventDefault();closeRecordDeleteDialog()}
+});
 function renderRecords(){
  const root=document.getElementById('recordHistory');root.replaceChildren();
  const list=Object.entries(workoutRecords).sort((a,b)=>b[1].date.localeCompare(a[1].date)||b[0].localeCompare(a[0]));
@@ -1131,7 +1166,7 @@ function renderRecords(){
   front.addEventListener('pointerup',finishSwipe);front.addEventListener('pointercancel',()=>{clearPress();started=null;swiping=false;row.classList.remove('tracking');row.style.removeProperty('--record-reveal')});
   front.addEventListener('contextmenu',e=>e.preventDefault());
   let lastTouch=0;
-  const askDelete=()=>{if(confirm('确定删除 '+r.date.replaceAll('-','/')+' 的「'+r.name+'」训练记录吗？')){const next={...workoutRecords};delete next[id];if(saveWorkoutRecords(next))renderRecords()}};
+  const askDelete=()=>openRecordDeleteDialog(id,r,del);
   del.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen'){e.preventDefault();e.stopPropagation();lastTouch=Date.now();askDelete()}});
   del.addEventListener('click',e=>{e.stopPropagation();if(Date.now()-lastTouch>700)askDelete()});
  }
