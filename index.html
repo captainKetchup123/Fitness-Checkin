@@ -331,6 +331,23 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
 .recordPagination span{font-size:12px;color:var(--muted)}
 .recordEmpty{color:var(--muted);text-align:center;padding:20px 0;font-size:13px}
 @media(max-width:460px){.recordCard{padding:15px}.recordRowFront{padding:11px 9px}.recordRowName{font-size:12px}.recordRowMetrics{font-size:11px}}
+
+/* v99: custom workout project colors. Uncolored projects inherit the theme. */
+.workoutTint{background:var(--workout-bg)!important;color:var(--workout-fg)!important;border-color:var(--workout-border)!important}
+.pick.workoutTint{border-style:solid!important}
+.pick.multiSelected.hasWorkoutTints{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:2px;white-space:normal}
+.pick .workoutLine{display:block;min-width:0;max-width:100%;overflow-wrap:anywhere;line-height:1.35}
+.pick .workoutLine.tintedLine{background:var(--line-bg);color:var(--line-fg);border:1px solid var(--line-border);border-radius:5px;padding:2px 1px}
+.workoutColorBackdrop{position:fixed;inset:0;z-index:60;background:#0007;display:flex;align-items:center;justify-content:center;padding:18px;overscroll-behavior:contain}
+.workoutColorBackdrop[hidden]{display:none!important}
+.workoutColorCard{width:min(390px,100%);background:var(--picker);border:1px solid var(--border);border-radius:20px;padding:17px;box-shadow:0 12px 36px #0005}
+.workoutColorHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.workoutColorHeader h2{font-size:19px;margin:0;color:var(--text)}
+.workoutColorClose{width:36px;height:36px;border:0;border-radius:9px;background:var(--surface);color:var(--text);font-size:24px}
+.workoutColorGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.workoutColorChoice{min-width:0;min-height:91px;border:1px solid var(--swatch-border);border-radius:13px;background:var(--swatch-bg);color:var(--swatch-fg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:9px 2px;font-size:13px;font-weight:650}
+.workoutColorChoice[aria-pressed="true"]{outline:2px solid var(--text);outline-offset:-2px}
+.workoutColorDot{width:27px;height:27px;border-radius:50%;background:var(--swatch-fg);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
 </style>
 </head>
 <body><main class="app">
@@ -398,6 +415,7 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
  <div class="dateGridStage" id="dateGridStage"><div class="datePickerGrid" id="datePickerGrid"></div></div><div class="datePickerFooter"><button id="dateToday" type="button">今天</button><button id="dateClose" type="button">取消</button></div>
  </div></div>
 <div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="dialogTitle"><div class="sheet"><div class="pickerHead"><h2 id="dialogTitle">选择训练</h2></div><div id="options" class="trainingScroll"></div><div class="pickerFooter"><div id="trainingAddDock" class="trainingAddDock"></div><button class="cancel" id="cancel">完成</button></div></div></div>
+<div id="workoutColorDialog" class="workoutColorBackdrop" hidden role="dialog" aria-modal="true" aria-labelledby="workoutColorTitle"><div class="workoutColorCard"><div class="workoutColorHeader"><h2 id="workoutColorTitle">设置项目颜色</h2><button type="button" class="workoutColorClose" id="workoutColorClose" aria-label="关闭">×</button></div><div id="workoutColorGrid" class="workoutColorGrid"></div></div></div>
 <div class="panel" id="themePanel" role="dialog" aria-modal="true" aria-labelledby="themeTitle"><div class="sheet themeSheet"><h2 id="themeTitle">🎨 自定义颜色</h2><p class="themeIntro">选择预设主题，或点颜色方块逐项调整。修改立即生效并自动保存。</p><div class="themePresets" id="presets"></div><div id="colorRows"></div><div class="themeActions"><button class="secondary" id="resetTheme">恢复默认</button><button class="secondary" id="closeTheme">完成</button></div><p class="themeNote">登录 Google 后配色也会同步到云端；JSON 备份同时包含配色。</p></div></div>
 
 <script>
@@ -474,6 +492,50 @@ if(hiddenTraining.includes('单杠引体')&&trainingOrder.includes('引体向上
 }
 for(const name of trainingOrder)idForTraining(name);
 saveTrainingIds();
+const WORKOUT_COLORS_KEY='fitness-calendar-workout-colors-v1';
+const WORKOUT_PALETTE={
+ red:{label:'胸部红',bg:'#FBE3DE',fg:'#A44C3B',border:'#E6B4AB'},
+ blue:{label:'背部蓝',bg:'#E0EBFC',fg:'#376FA8',border:'#B2CAE9'},
+ purple:{label:'肩部紫',bg:'#EBE4F8',fg:'#7857A2',border:'#CDBAE9'},
+ green:{label:'腿部绿',bg:'#E3F2E5',fg:'#3F8557',border:'#B1D8BA'},
+ yellow:{label:'核心黄',bg:'#FFF0CC',fg:'#A16A16',border:'#EACB81'}
+};
+const WORKOUT_COLOR_DEFAULT={label:'默认',bg:'#F0EDE6',fg:'#292929',border:'#DDD9CE'};
+function cleanWorkoutColors(raw){
+ const out={};if(!raw||typeof raw!=='object'||Array.isArray(raw))return out;
+ for(const [id,color] of Object.entries(raw))if(typeof id==='string'&&id.length<110&&Object.hasOwn(WORKOUT_PALETTE,color))out[id]=color;
+ return out;
+}
+let workoutColors=(()=>{try{return cleanWorkoutColors(JSON.parse(localStorage.getItem(WORKOUT_COLORS_KEY)||'{}'))}catch{return {}}})();
+function colorForTraining(name){return WORKOUT_PALETTE[workoutColors[idForTraining(name)]]||null}
+function setWorkoutTint(element,color){if(!color)return;element.classList.add('workoutTint');element.style.setProperty('--workout-bg',color.bg);element.style.setProperty('--workout-fg',color.fg);element.style.setProperty('--workout-border',color.border)}
+function saveWorkoutColors(){
+ try{localStorage.setItem(WORKOUT_COLORS_KEY,JSON.stringify(workoutColors))}catch(e){console.warn('训练颜色保存失败',e)}
+ notifyChange('order');
+}
+let colorEditingType=null;
+function closeWorkoutColor(){colorEditingType=null;document.getElementById('workoutColorDialog').hidden=true}
+function showWorkoutColor(name){
+ colorEditingType=name;
+ const root=document.getElementById('workoutColorGrid');root.replaceChildren();
+ const options=[['default',WORKOUT_COLOR_DEFAULT],...Object.entries(WORKOUT_PALETTE)];
+ const current=workoutColors[idForTraining(name)]||'default';
+ for(const [id,style] of options){
+  const button=document.createElement('button');button.type='button';button.className='workoutColorChoice';button.setAttribute('aria-pressed',String(id===current));
+  button.style.setProperty('--swatch-bg',style.bg);button.style.setProperty('--swatch-fg',style.fg);button.style.setProperty('--swatch-border',style.border);
+  const dot=document.createElement('span');dot.className='workoutColorDot';if(id===current)dot.textContent='✓';
+  const label=document.createElement('span');label.textContent=style.label;button.append(dot,label);
+  button.onclick=()=>{
+   const trainingId=idForTraining(name);
+   if(id==='default')delete workoutColors[trainingId];else workoutColors[trainingId]=id;
+   saveWorkoutColors();closeWorkoutColor();render();renderPicker();
+  };
+  root.append(button);
+ }
+ document.getElementById('workoutColorDialog').hidden=false;
+}
+document.getElementById('workoutColorClose').onclick=closeWorkoutColor;
+document.getElementById('workoutColorDialog').addEventListener('click',e=>{if(e.target.id==='workoutColorDialog')closeWorkoutColor()});
 // 同一日期可保存多个训练项目，兼容旧版 {type,done} 数据。
 function entryTypes(entry){
  if(!entry||typeof entry!=='object')return [];
@@ -1189,6 +1251,18 @@ function render(){
   const box=document.createElement('div');box.className='day'+(isToday?' current':'');
   const num=document.createElement('div');num.className='number';num.textContent=d;if(isToday){let mark=document.createElement('em');mark.textContent='今';num.append(mark)}
   const pick=document.createElement('button');pick.type='button';const restOnly=types.length===1&&types[0]==='休息';pick.className=selected?(restOnly?'pick restDay':'pick selected'):'pick';if(types.length>1)pick.classList.add('multiSelected');pick.textContent=selected?types.join('\n'):'＋ 选择';pick.setAttribute('aria-label',`${id} 选择训练：${types.join('、')||'未选择'}`);pick.addEventListener('click',()=>showPicker(id));
+  if(selected){
+   if(types.length===1){setWorkoutTint(pick,colorForTraining(types[0]));}
+   else if(types.some(t=>colorForTraining(t))){
+    pick.textContent='';pick.classList.add('hasWorkoutTints');
+    for(const t of types){
+     const item=document.createElement('span');item.className='workoutLine';item.textContent=t;
+     const tint=colorForTraining(t);
+     if(tint){item.classList.add('tintedLine');item.style.setProperty('--line-bg',tint.bg);item.style.setProperty('--line-fg',tint.fg);item.style.setProperty('--line-border',tint.border)}
+     pick.append(item);
+    }
+   }
+  }
   const heading=document.createElement('div');heading.className='dateHeading';heading.append(num);
   const holidays=holidaysFor(year,month+1,d);
   // 月历里意大利节日单独放在日期与训练选项之间；列表模式仍与日期同一行。
@@ -1265,7 +1339,7 @@ function renderPicker(){
   const move=document.createElement('button');move.type='button';move.className='swipeMove';move.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14"></path><path d="M5 12h14"></path><path d="M5 17h14"></path></svg>';move.setAttribute('aria-label','移动训练项目：'+type);
   const remove=document.createElement('button');remove.type='button';remove.className='swipeDelete';remove.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg>';remove.setAttribute('aria-label','删除训练项目：'+type);
   actions.append(move,remove);
-  const active=entryHasTraining(entries[id],type);const front=document.createElement('button');front.type='button';front.className='option swipeFront'+(active?' active':'');front.textContent=(active?'✓  ':'')+type;front.setAttribute('aria-pressed',String(active));
+  const active=entryHasTraining(entries[id],type);const front=document.createElement('button');front.type='button';front.className='option swipeFront'+(active?' active':'');front.textContent=(active?'✓  ':'')+type;setWorkoutTint(front,colorForTraining(type));front.setAttribute('aria-pressed',String(active));
   front.setAttribute('aria-label',type+'，向左滑动可移动或删除');
   let suppressClickUntil=0;
   let pressTimer=null,pressOrigin=null;
@@ -1391,8 +1465,8 @@ function renderPicker(){
   front.addEventListener('pointercancel',e=>endGesture(e,true));
   front.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')stopPress()});
   let suppressMoveClickUntil=0;
-  // 单击三横线不再显示额外按钮；按住并上下拖动即可排序。
-  move.onclick=()=>{};
+  // 轻点三横线选择颜色，上下拖动仍用原先的 FLIP 排序逻辑。
+  move.onclick=()=>{if(performance.now()<suppressMoveClickUntil)return;showWorkoutColor(type)};
   // 按住移动手柄时，让浮动卡片跟手移动，并通过 FLIP 动画把其他项目挤开。
   let drag=null;
   const reorderPlaceholder=(clientY)=>{
@@ -1540,7 +1614,7 @@ el('panel').addEventListener('touchmove',e=>{
  if(max<=1 || (delta>0&&scroll.scrollTop<=0) || (delta<0&&scroll.scrollTop>=max-1))e.preventDefault();
 },{passive:false});
 function showPicker(id){editing=id;openedTrainingRow=null;movingTrainingRow=null;el('dialogTitle').textContent=`${id.replaceAll('-','/')} · 选择训练`;renderPicker();el('options').scrollTop=0;lockTrainingPickerBackground();el('panel').classList.add('show')}
-function hidePicker(){if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show');unlockTrainingPickerBackground()}
+function hidePicker(){closeWorkoutColor();if(closeTrainingInlineEditor){closeTrainingInlineEditor();closeTrainingInlineEditor=null;}editing=null;openedTrainingRow=null;movingTrainingRow=null;el('panel').classList.remove('show');unlockTrainingPickerBackground()}
 el('monthView').onclick=()=>setView('month');el('listView').onclick=()=>setView('list');
 
 function closeMenu(){el('appMenu').hidden=true;el('menuBtn').setAttribute('aria-expanded','false')}
@@ -1572,7 +1646,7 @@ el('panel').addEventListener('click',e=>{
   opened.forEach(row=>row.closeSwipe?.());
   if(e.target===el('panel'))e.stopPropagation();
 },true);
-el('panel').addEventListener('click',e=>{if(e.target===el('panel'))hidePicker()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){hidePicker();closeTheme()}});
+el('panel').addEventListener('click',e=>{if(e.target===el('panel'))hidePicker()});document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeWorkoutColor();hidePicker();closeTheme()}});
 let mainTransitionId=0;
 let mainTransitionTimers=[];
 function resetMainAnimation(){
@@ -1617,8 +1691,8 @@ el('todayBtn').onclick=()=>{
  const diff=(today.getFullYear()-year)*12+(today.getMonth()-month);
  navigateMainCalendar(today.getFullYear(),today.getMonth(),Math.sign(diff)||1);
 };
-el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,workoutRecords,theme,viewMode,trainingOrder,hiddenTraining,trainingIds},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');if(data.trainingIds&&typeof data.trainingIds==='object'){trainingIds={...trainingIds,...cleanTrainingIds(data.trainingIds)};saveTrainingIds()}let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.workoutRecords&&typeof data.workoutRecords==='object'){const imported=cleanWorkoutRecords(data.workoutRecords);if(saveWorkoutRecords(imported))renderRecords()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}for(const t of trainingOrder)idForTraining(t);saveTrainingIds(true);if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
+el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,workoutRecords,theme,viewMode,trainingOrder,hiddenTraining,trainingIds,workoutColors},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');if(data.trainingIds&&typeof data.trainingIds==='object'){trainingIds={...trainingIds,...cleanTrainingIds(data.trainingIds)};saveTrainingIds()}let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;if(data.workoutColors&&typeof data.workoutColors==='object'){workoutColors=cleanWorkoutColors(data.workoutColors);saveWorkoutColors()}entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.workoutRecords&&typeof data.workoutRecords==='object'){const imported=cleanWorkoutRecords(data.workoutRecords);if(saveWorkoutRecords(imported))renderRecords()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}for(const t of trainingOrder)idForTraining(t);saveTrainingIds(true);if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
 render();
 </script>
 <script type="module">
@@ -1690,8 +1764,9 @@ function applyRemote(remote){
   for(const name of trainingOrder)idForTraining(name);
   saveTrainingIds();
  }
+ if(!pending.order){workoutColors=cleanWorkoutColors(remote.workoutColors);localStorage.setItem(WORKOUT_COLORS_KEY,JSON.stringify(workoutColors))}
  if(!pending.view&&(remote.viewMode==='month'||remote.viewMode==='list')){viewMode=remote.viewMode;localStorage.setItem(VIEW_KEY,viewMode)}
- render();
+ render();if(document.getElementById('panel').classList.contains('show'))renderPicker();
 }
 async function sync(){
  if(!user||!ready||processing||!navigator.onLine)return;
@@ -1702,7 +1777,7 @@ async function sync(){
   const ref=doc(db,'users',currentUser);
   const firstSync=!localStorage.getItem('fitness-calendar-initial-'+currentUser);
   const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||Object.keys(patch.weights).length||Object.keys(patch.records).length||firstSync;
-  const local=copy(entries);const localWeights=copy(weights);const localRecords=copy(workoutRecords);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);const currentTrainingIds=copy(trainingIds);
+  const local=copy(entries);const localWeights=copy(weights);const localRecords=copy(workoutRecords);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);const currentTrainingIds=copy(trainingIds);const currentWorkoutColors=copy(workoutColors);
   let latest;
   if(hasPatch){
    latest=await runTransaction(db,async tx=>{
@@ -1720,7 +1795,7 @@ async function sync(){
      if(!snap.exists())Object.assign(mergedRecords,cleanWorkoutRecords(localRecords));
      else if(firstSync){for(const [k,v] of Object.entries(cleanWorkoutRecords(localRecords)))if(!(k in mergedRecords))mergedRecords[k]=v}
      for(const [k,v] of Object.entries(patch.records))if(/^r-[\w-]{3,110}$/.test(k)){if(v===null)delete mergedRecords[k];else {const valid=cleanWorkoutRecords({[k]:v});if(valid[k])mergedRecords[k]=valid[k]}}
-     const result={entries:merged,weights:mergedWeights,workoutRecords:mergedRecords,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],trainingIds:patch.order||!snap.exists()?currentTrainingIds:remote.trainingIds||currentTrainingIds,updatedAt:Date.now()};
+     const result={entries:merged,weights:mergedWeights,workoutRecords:mergedRecords,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],trainingIds:patch.order||!snap.exists()?currentTrainingIds:remote.trainingIds||currentTrainingIds,workoutColors:patch.order||!snap.exists()?currentWorkoutColors:remote.workoutColors||{},updatedAt:Date.now()};
     tx.set(ref,result);return result;
    });
    // Never discard changes created during the asynchronous upload.
@@ -1729,12 +1804,12 @@ async function sync(){
     for(const [k,v] of Object.entries(patch.records))if(JSON.stringify(pending.records[k])===JSON.stringify(v))delete pending.records[k];
    if(patch.theme&&JSON.stringify(theme)===JSON.stringify(currentTheme))pending.theme=false;
    if(patch.view&&viewMode===currentView)pending.view=false;
-   if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden)&&JSON.stringify(trainingIds)===JSON.stringify(currentTrainingIds))pending.order=false;
+   if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden)&&JSON.stringify(trainingIds)===JSON.stringify(currentTrainingIds)&&JSON.stringify(workoutColors)===JSON.stringify(currentWorkoutColors))pending.order=false;
    storePending();
   }else{
    const snap=await getDoc(ref);
    if(!snap.exists()){
-    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),workoutRecords:cleanWorkoutRecords(localRecords),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,trainingIds:currentTrainingIds,updatedAt:Date.now()};tx.set(ref,result);return result});
+    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),workoutRecords:cleanWorkoutRecords(localRecords),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,trainingIds:currentTrainingIds,workoutColors:currentWorkoutColors,updatedAt:Date.now()};tx.set(ref,result);return result});
    }else latest=snap.data();
   }
   if(user?.uid!==currentUser)return;
