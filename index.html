@@ -62,13 +62,16 @@
 .app{padding-bottom:calc(110px + env(safe-area-inset-bottom))}
 .bottomNav{position:fixed;z-index:18;bottom:0;left:0;right:0;display:flex;justify-content:center;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--bg);border-top:1px solid var(--border)}
 .bottomNavInner{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:min(850px,100%)}
-.tabBtn{border:0;border-radius:13px;background:transparent;color:var(--muted);padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13px;font-weight:650}
-.tabBtn .tabIcon{width:24px;height:24px;display:block;color:currentColor}.tabBtn .tabIcon svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}.tabBtn.active{background:var(--surface);color:var(--yellow)}
+.tabBtn{border:0;border-radius:13px;background:transparent;color:var(--muted);padding:10px 14px;display:flex;flex-direction:column;align-items:center;gap:5px;font-size:13px;font-weight:560;letter-spacing:.01em}
+.tabBtn .tabIcon{width:24px;height:24px;display:block;color:currentColor}.tabBtn .tabIcon svg{width:100%;height:100%;display:block;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.tabBtn.active{background:var(--surface);color:var(--yellow)}
+/* v98: 与「体重」视觉笔画粗细对齐；哑铃使用较大的 viewBox，单独补偿 SVG 线宽 */
+#tabRecord{font-weight:650}
+#tabRecord .tabIcon svg{stroke-width:2.3}
 /* v90 手机端底部导航：减少高度，释放日历可视区域 */
 @media(max-width:600px){
  .bottomNav{padding:5px 12px calc(5px + env(safe-area-inset-bottom));}
  .bottomNavInner{gap:6px;}
- .tabBtn{padding:6px 10px;gap:2px;border-radius:12px;font-size:12px;line-height:1.25;}
+ .tabBtn{padding:6px 10px;gap:2px;border-radius:12px;font-size:12px;line-height:1.25;font-weight:560;}
  .tabBtn .tabIcon{width:21px;height:21px;}
 }
 
@@ -278,6 +281,56 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
   #calendarPage .calendar:not(.listMode) .pick{min-height:34px;}
   #calendarPage .calendar:not(.listMode) .holidayItRow{flex-basis:13px;height:13px;min-height:13px;}
 }
+
+/* v94 训练记录编辑表单、日期选择器与下拉框统一 */
+/* v93 训练记录页 */
+.bottomNavInner{grid-template-columns:repeat(3,minmax(0,1fr))}
+.recordPage{display:flex;flex-direction:column;gap:16px}
+.recordCard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+.recordCard h2{font-size:19px;margin:0 0 8px}
+.recordForm{display:flex;flex-direction:column;gap:13px}
+.recordField{display:flex;flex-direction:column;gap:7px;min-width:0;color:var(--muted);font-size:13px}
+.recordField input,.recordField select{min-width:0;width:100%;min-height:46px;border:1px solid var(--border);border-radius:10px;background:var(--pickbg);color:var(--text);font:inherit;font-size:16px;padding:10px 12px;color-scheme:inherit}
+.recordField select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 19px) 21px,calc(100% - 14px) 21px;background-size:5px 5px;background-repeat:no-repeat;padding-right:35px}
+.recordInputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.recordSave{width:100%;min-height:46px;border:0;border-radius:11px;background:var(--yellow);color:var(--buttonText);font-weight:750;font-size:16px}
+/* 保存按钮：轻按 96%，120ms 后弹回；不会强制等待云端同步 */
+.weightSave,.recordSave{transform:scale(1);transition:transform 120ms ease-out;transform-origin:center;touch-action:manipulation}
+.weightSave.savePressed,.recordSave.savePressed{transform:scale(.96)}
+@media(prefers-reduced-motion:reduce){.weightSave,.recordSave{transition:none!important}}
+.recordError{color:#c63e35;font-size:13px}.recordError:empty{display:none}
+.recordCardHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.recordCardHead h2{margin:0}
+.recordHistoryBody{display:grid;grid-template-rows:minmax(0,1fr);opacity:1;margin-top:14px;transition:grid-template-rows .4s ease,opacity .3s ease,margin-top .4s ease}
+.recordHistoryInner{min-height:0;overflow:hidden}
+.recordCard.collapsed .recordHistoryBody{grid-template-rows:minmax(0,0fr);opacity:0;margin-top:0;pointer-events:none}
+.recordDateLabel{color:var(--muted);font-size:12px;font-weight:650;margin:14px 0 8px}
+.recordDateLabel:first-child{margin-top:0}
+.recordRow{--record-reveal:0px;display:flex;min-width:0;overflow:hidden;margin-bottom:7px;border:1px solid var(--border);border-radius:11px;background:var(--pickbg);touch-action:pan-y;min-height:50px}
+.recordRowFront{flex:1 1 0;min-width:0;display:flex;justify-content:space-between;align-items:center;gap:9px;padding:12px;user-select:none;-webkit-user-select:none;touch-action:pan-y;-webkit-touch-callout:none}
+.recordRowName{flex:1 1 0;min-width:0;overflow-wrap:anywhere;font-weight:600;font-size:13px}
+.recordRowMetrics{flex:0 0 auto;white-space:nowrap;font-size:12px;font-weight:650;font-variant-numeric:tabular-nums}
+.recordRowAction{flex:0 0 var(--record-reveal);width:var(--record-reveal);background:#d65d55;display:flex;overflow:hidden;transition:flex-basis .28s ease,width .28s ease}
+.recordRow.open{--record-reveal:60px}
+.recordRow.tracking .recordRowAction{transition:none}
+.recordRowAction button{width:100%;border:0;color:white;background:transparent;font-size:24px;touch-action:manipulation}
+.recordRow.editing{display:block}
+.recordRow.editing .recordRowFront{display:grid;grid-template-columns:1fr 1fr;gap:8px;user-select:auto}
+.recordInlineField{min-width:0;display:flex;flex-direction:column;gap:3px;color:var(--muted);font-size:11px}
+.recordInlineField input:not([type="hidden"]),.recordInlineField select,.recordInlineField .dateDisplay{display:block;box-sizing:border-box;min-width:0;max-width:100%;width:100%;height:43px;min-height:43px;padding:8px 10px;border:1px solid var(--border);border-radius:9px;background-color:var(--pickbg);color:var(--text);font-family:inherit;font-size:14px;outline:none;box-shadow:none}
+.recordInlineField select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 19px) 19px,calc(100% - 14px) 19px;background-size:5px 5px;background-repeat:no-repeat;padding-right:29px}
+.recordInlineField .dateDisplay{display:flex;align-items:center;justify-content:space-between;text-align:left;gap:5px;white-space:nowrap;padding:8px 10px}
+.recordInlineField .dateDisplay svg{flex:0 0 18px;width:18px;height:18px}
+.recordInlineField input:focus,.recordInlineField select:focus,.recordInlineField .dateDisplay:focus-visible{border-color:var(--yellow);outline:none;box-shadow:0 0 0 1px var(--yellow)}
+.recordRow.editing .recordRowFront{min-width:0;overflow:hidden;grid-template-columns:repeat(2,minmax(0,1fr))}
+.recordInlineField input[type="hidden"]{display:none}
+.recordInlineField.wide{grid-column:1/-1}
+.recordPagination{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px;padding-top:13px;border-top:1px solid var(--border)}
+.recordPagination button{border:1px solid var(--border);border-radius:9px;background:var(--surface);color:var(--text);padding:8px;font-size:12px}
+.recordPagination button:disabled{opacity:.35}
+.recordPagination span{font-size:12px;color:var(--muted)}
+.recordEmpty{color:var(--muted);text-align:center;padding:20px 0;font-size:13px}
+@media(max-width:460px){.recordCard{padding:15px}.recordRowFront{padding:11px 9px}.recordRowName{font-size:12px}.recordRowMetrics{font-size:11px}}
 </style>
 </head>
 <body><main class="app">
@@ -313,10 +366,25 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
   <div class="weightCard weightHistoryCard" id="weightHistoryCard"><div class="weightCardHead compact"><h2>体重历史</h2><button type="button" id="weightHistoryToggle" class="weightToggleBtn" aria-expanded="true" aria-controls="weightHistoryBody"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6"/></svg></button></div><div id="weightHistoryBody" class="weightHistoryBody"><div class="weightHistoryInner" id="weightHistoryInner"><div id="weightSummary" class="weightSummary"></div><div id="weightHistory"></div><nav id="weightPagination" class="weightPagination" aria-label="体重历史分页" hidden><button type="button" id="weightPrevPage" aria-label="上一页">‹ 上一页</button><span id="weightPageInfo" aria-live="polite"></span><button type="button" id="weightNextPage" aria-label="下一页">下一页 ›</button></nav></div></div></div>
 </section>
 
+<section id="recordPage" class="recordPage" hidden aria-label="训练记录">
+ <div class="recordCard"><h2>新增记录</h2>
+  <form id="recordForm" class="recordForm" novalidate>
+   <div class="recordField"><label for="recordDateBtn">日期</label><input type="hidden" id="recordDate"/><button id="recordDateBtn" type="button" class="dateDisplay"><span id="recordDateText">请选择日期</span><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"/></svg></button></div>
+   <label class="recordField">训练项目<select id="recordType" required></select></label>
+   <div class="recordInputs"><label class="recordField">重量（kg，可不填）<input id="recordWeight" type="number" inputmode="decimal" min="0" step="any"/></label><label class="recordField">次数<input id="recordReps" type="number" inputmode="numeric" min="1" step="1" required/></label></div>
+   <button class="recordSave" type="submit">保存记录</button><div id="recordError" class="recordError" role="status"></div>
+  </form>
+ </div>
+ <div class="recordCard" id="recordHistoryCard"><div class="recordCardHead"><h2>历史记录</h2><button type="button" id="recordHistoryToggle" class="weightToggleBtn" aria-expanded="true" aria-label="展开或收起历史记录"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 14l6-6 6 6"/></svg></button></div>
+  <div id="recordHistoryBody" class="recordHistoryBody"><div class="recordHistoryInner"><div id="recordHistory"></div><nav class="recordPagination" id="recordPagination" hidden><button type="button" id="recordPrev">‹ 上一页</button><span id="recordPageInfo"></span><button type="button" id="recordNext">下一页 ›</button></nav></div></div>
+ </div>
+</section>
+
 </main>
 <nav class="bottomNav" aria-label="底部导航"><div class="bottomNavInner">
 <button type="button" class="tabBtn active" id="tabCalendar" aria-current="page"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"></rect><path d="M7.5 3.5v3"></path><path d="M16.5 3.5v3"></path><path d="M3.5 9.5h17"></path><path d="M8 13h.01"></path><path d="M12 13h.01"></path><path d="M16 13h.01"></path><path d="M8 17h.01"></path><path d="M12 17h.01"></path></svg></span>日历</button>
 <button type="button" class="tabBtn" id="tabWeight"><span class="tabIcon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6.5 5.5h11a2 2 0 0 1 2 2v9a2.5 2.5 0 0 1-2.5 2.5h-10A2.5 2.5 0 0 1 4.5 16.5v-9a2 2 0 0 1 2-2Z"></path><path d="M8 9.5a4 4 0 0 1 8 0"></path><path d="M12 9.5l1.8-1.3"></path><path d="M9 14.5h6"></path></svg></span>体重</button>
+<button type="button" class="tabBtn" id="tabRecord"><span class="tabIcon" aria-hidden="true"><svg viewBox="-2 -2 28 28"><g transform="rotate(-45 12 12)"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></g></svg></span>记录</button>
 </div></nav>
 <div id="weightDeleteDialog" class="weightDeleteBackdrop" role="dialog" aria-modal="true" aria-label="删除体重记录确认" aria-describedby="weightDeleteDescription" hidden>
   <div class="weightDeleteCard">
@@ -732,14 +800,15 @@ document.addEventListener('click',e=>{
 const todayKey=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
 const formatWeightDate=d=>d.replaceAll('-','/');
 let datePickerYear=now.getFullYear(),datePickerMonth=now.getMonth();
-function setWeightDate(date){document.getElementById('weightDate').value=date;document.getElementById('weightDateText').textContent=formatWeightDate(date)}
+let activeDateInput="weightDate";
+function setWeightDate(date){document.getElementById(activeDateInput).value=date;document.getElementById(activeDateInput+'Text').textContent=formatWeightDate(date)}
 function renderDatePicker(){
  const title=document.getElementById('datePickerTitle'),grid=document.getElementById('datePickerGrid');
  title.textContent=`${datePickerYear} 年 ${datePickerMonth+1} 月`;grid.replaceChildren();
  for(const name of ['一','二','三','四','五','六','日']){const day=document.createElement('span');day.className='dateWeekday';day.textContent=name;grid.append(day)}
  const offset=(new Date(datePickerYear,datePickerMonth,1).getDay()+6)%7;
  for(let i=0;i<offset;i++){const blank=document.createElement('span');grid.append(blank)}
- const count=new Date(datePickerYear,datePickerMonth+1,0).getDate(),selected=document.getElementById('weightDate').value;
+ const count=new Date(datePickerYear,datePickerMonth+1,0).getDate(),selected=document.getElementById(activeDateInput).value;
  for(let day=1;day<=count;day++){
   const date=key(datePickerYear,datePickerMonth,day);const button=document.createElement('button');button.type='button';button.className='dateCell'+(date===todayKey()?' isToday':'')+(date===selected?' isSelected':'');button.textContent=day;button.setAttribute('aria-label',formatWeightDate(date));
   button.onclick=()=>{setWeightDate(date);closeDatePicker()};grid.append(button);
@@ -757,8 +826,8 @@ function resetDateAnimation(){
  grid.classList.remove('outNext','outPrev','inNext','inPrev','todayPulse');
  title.classList.remove('switching');
 }
-function openDatePicker(){
- resetDateAnimation();const selected=document.getElementById('weightDate').value||todayKey();
+function openDatePicker(target='weightDate'){
+ activeDateInput=target;resetDateAnimation();const selected=document.getElementById(activeDateInput).value||todayKey();
  const [y,m]=selected.split('-').map(Number);datePickerYear=y;datePickerMonth=m-1;
  renderDatePicker();document.getElementById('dateDialog').hidden=false;
 }
@@ -789,7 +858,8 @@ function changePickerMonth(delta){
  const date=new Date(datePickerYear,datePickerMonth+delta,1);
  navigatePicker(date.getFullYear(),date.getMonth(),Math.sign(delta));
 }
-document.getElementById('weightDateBtn').onclick=openDatePicker;
+document.getElementById('weightDateBtn').onclick=()=>openDatePicker('weightDate');
+document.getElementById('recordDateBtn').onclick=()=>openDatePicker('recordDate');
 document.getElementById('datePrev').onclick=()=>changePickerMonth(-1);
 document.getElementById('dateNext').onclick=()=>changePickerMonth(1);
 document.getElementById('datePrevYear').onclick=()=>changePickerMonth(-12);
@@ -799,7 +869,7 @@ document.getElementById('dateToday').onclick=()=>{const today=todayKey();const d
 document.getElementById('dateDialog').addEventListener('click',e=>{if(e.target.id==='dateDialog')closeDatePicker()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDatePicker()});
 
-setWeightDate(todayKey());
+activeDateInput='weightDate';setWeightDate(todayKey());activeDateInput='recordDate';setWeightDate(todayKey());activeDateInput='weightDate';
 // v63: 使用唯一的体重保存入口，先更新本地记录与界面，再通知云端同步。
 (function(){
  const form=document.getElementById('weightForm');
@@ -817,6 +887,7 @@ setWeightDate(todayKey());
  });
  function submitWeight(event){
   event?.preventDefault();
+  animateSave(document.querySelector('#weightForm .weightSave'));
   if(saving)return;
   const date=document.getElementById('weightDate').value;
   const raw=input.value.trim().replace(',','.');
@@ -850,8 +921,146 @@ setWeightDate(todayKey());
 })();
 // 体重表单由独立脚本处理，保证核心保存不受图表和云模块异常影响。
 
-function selectPage(name){const cal=name==='calendar';document.getElementById('calendarPage').hidden=!cal;document.getElementById('weightPage').hidden=cal;document.getElementById('todayBtn').hidden=!cal;for(const [id,active] of [['tabCalendar',cal],['tabWeight',!cal]]){const button=document.getElementById(id);button.classList.toggle('active',active);if(active)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')}closeMenu();window.scrollTo(0,0);if(!cal)renderWeights()}
-document.getElementById('tabCalendar').onclick=()=>selectPage('calendar');document.getElementById('tabWeight').onclick=()=>selectPage('weight');
+
+/* v93 - 训练记录：每条记录具有稳定 ID，名称按记录当天保存。 */
+const RECORDS_KEY='fitness-calendar-workout-records-v1';
+const recordId=()=>typeof crypto!=='undefined'&&crypto.randomUUID?'r-'+crypto.randomUUID():'r-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
+function validRecordDate(s){return typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(Date.parse(s+'T00:00:00'))}
+function cleanWorkoutRecords(raw){
+ const result={};if(!raw||typeof raw!=='object'||Array.isArray(raw))return result;
+ for(const [k,v] of Object.entries(raw)){
+  if(!/^r-[\w-]{3,110}$/.test(k)||!v||!validRecordDate(v.date)||!validType(v.name)||!Number.isInteger(Number(v.reps))||Number(v.reps)<1||Number(v.reps)>100000)continue;
+  let weight=null;
+  if(v.weight!==null&&v.weight!==undefined&&v.weight!==''){
+   if(!Number.isFinite(Number(v.weight))||Number(v.weight)<0||Number(v.weight)>500)continue;
+   weight=roundWeight(v.weight);
+  }
+  result[k]={date:v.date,name:v.name,trainingId:typeof v.trainingId==='string'&&v.trainingId.length<110?v.trainingId:idForTraining(v.name),weight,reps:Number(v.reps)};
+ }
+ return result;
+}
+let workoutRecords={};
+try{workoutRecords=cleanWorkoutRecords(JSON.parse(localStorage.getItem(RECORDS_KEY)||'{}'))}catch(e){console.warn('读取训练记录失败',e)}
+function saveWorkoutRecords(next){
+ try{localStorage.setItem(RECORDS_KEY,JSON.stringify(next))}catch(e){alert('保存训练记录失败：'+(e.message||e));return false}
+ workoutRecords=next;notifyChange('records');return true;
+}
+function animateSave(button){
+ if(!button)return;button.classList.remove('savePressed');void button.offsetWidth;button.classList.add('savePressed');
+ clearTimeout(button._saveTimer);button._saveTimer=setTimeout(()=>button.classList.remove('savePressed'),120);
+}
+function refreshRecordOptions(selectId){
+ const select=document.getElementById('recordType'),before=selectId??select.value;
+ const names=orderedTypes().filter(name=>name!=='休息');
+ select.replaceChildren();
+ const placeholder=document.createElement('option');placeholder.value='';placeholder.textContent='请选择训练项目';placeholder.disabled=true;select.append(placeholder);
+ for(const name of names){const option=document.createElement('option');option.value=idForTraining(name);option.textContent=name;select.append(option)}
+ select.value=[...select.options].some(x=>x.value===before)?before:'';
+}
+const recordForm=document.getElementById('recordForm');
+recordForm.addEventListener('submit',e=>{
+ e.preventDefault();animateSave(recordForm.querySelector('.recordSave'));
+ const date=document.getElementById('recordDate').value,sel=document.getElementById('recordType'),name=sel.selectedOptions[0]?.textContent;
+ const rawWeight=document.getElementById('recordWeight').value.trim().replace(',','.'),rawReps=document.getElementById('recordReps').value.trim();
+ const weight=rawWeight===''?null:roundWeight(rawWeight),reps=Number(rawReps);const error=document.getElementById('recordError');
+ if(!validRecordDate(date)||!name||!sel.value){error.textContent='请选择日期和训练项目';return}
+ if(rawWeight!==''&&(!Number.isFinite(Number(rawWeight))||Number(rawWeight)<0||Number(rawWeight)>500)){error.textContent='重量请输入 0–500 kg 的数字';return}
+ if(!rawReps||!Number.isInteger(reps)||reps<1||reps>100000){error.textContent='次数请输入有效正整数';return}
+ const id=recordId();
+ if(!saveWorkoutRecords({...workoutRecords,[id]:{date,name,trainingId:sel.value,weight,reps}}))return;
+ error.textContent='';document.getElementById('recordWeight').value='';document.getElementById('recordReps').value='';refreshRecordOptions('');recordPageIndex=0;renderRecords();
+});
+document.addEventListener('click',e=>{const status=document.getElementById('recordError');if(status.textContent&&!e.target.closest('#recordForm'))status.textContent=''});
+let recordPageIndex=0;
+const RECORD_PAGE_SIZE=20;
+let recordHistoryExpanded=true;
+const recordCard=document.getElementById('recordHistoryCard'),recordToggle=document.getElementById('recordHistoryToggle');
+recordToggle.onclick=()=>{recordHistoryExpanded=!recordHistoryExpanded;recordCard.classList.toggle('collapsed',!recordHistoryExpanded);recordToggle.setAttribute('aria-expanded',String(recordHistoryExpanded))};
+document.getElementById('recordPrev').onclick=()=>{if(recordPageIndex>0){recordPageIndex--;renderRecords()}};
+document.getElementById('recordNext').onclick=()=>{recordPageIndex++;renderRecords()};
+function recordLabel(r){return (r.weight===null?'自重':r.weight.toFixed(1)+' kg')+' · '+r.reps+' 次'}
+function recordOptionList(select,selectedId,currentName){
+ const names=orderedTypes().filter(name=>name!=='休息');
+ if(!names.some(n=>idForTraining(n)===selectedId))names.unshift(currentName);
+ for(const name of names){const opt=document.createElement('option');opt.value=idForTraining(name);opt.textContent=name;select.append(opt)}
+ select.value=selectedId;
+}
+function renderRecords(){
+ const root=document.getElementById('recordHistory');root.replaceChildren();
+ const list=Object.entries(workoutRecords).sort((a,b)=>b[1].date.localeCompare(a[1].date)||b[0].localeCompare(a[0]));
+ const count=Math.ceil(list.length/RECORD_PAGE_SIZE);recordPageIndex=Math.max(0,Math.min(recordPageIndex,Math.max(0,count-1)));
+ const pager=document.getElementById('recordPagination');pager.hidden=count<=1;
+ document.getElementById('recordPageInfo').textContent=(recordPageIndex+1)+' / '+Math.max(1,count);
+ document.getElementById('recordPrev').disabled=recordPageIndex===0;document.getElementById('recordNext').disabled=recordPageIndex>=count-1;
+ if(!list.length){const empty=document.createElement('div');empty.className='recordEmpty';empty.textContent='还没有训练记录';root.append(empty);return}
+ let lastDate='';
+ for(const [id,r] of list.slice(recordPageIndex*RECORD_PAGE_SIZE,(recordPageIndex+1)*RECORD_PAGE_SIZE)){
+  if(lastDate!==r.date){lastDate=r.date;const group=document.createElement('div');group.className='recordDateLabel';group.textContent=r.date.replaceAll('-','/');root.append(group)}
+  const row=document.createElement('div');row.className='recordRow';
+  const front=document.createElement('div');front.className='recordRowFront';
+  const nm=document.createElement('div');nm.className='recordRowName';nm.textContent=r.name;
+  const metrics=document.createElement('div');metrics.className='recordRowMetrics';metrics.textContent=recordLabel(r);front.append(nm,metrics);
+  const action=document.createElement('div');action.className='recordRowAction';const del=document.createElement('button');del.type='button';del.textContent='×';del.setAttribute('aria-label','删除 '+r.name+' 记录');action.append(del);row.append(front,action);root.append(row);
+  let started=null,press=null,swiping=false,editing=false;
+  const clearPress=()=>{clearTimeout(press);press=null};
+  const beginEdit=()=>{
+   if(editing)return;editing=true;started=null;clearPress();row.classList.remove('open');row.classList.add('editing');action.hidden=true;front.replaceChildren();
+   const makeField=(title,element,wide=false)=>{const label=document.createElement('label');label.className='recordInlineField'+(wide?' wide':'');label.textContent=title;label.append(element);front.append(label);return element};
+   // 复用体重页和新增记录的中文日历，不使用 iOS 原生英文 date 弹窗。
+   const dateWrap=document.createElement('div');dateWrap.className='recordInlineField';
+   const dateTitle=document.createElement('span');dateTitle.textContent='日期';
+   const date=document.createElement('input');date.type='hidden';date.id='recordEditDate';date.value=r.date;
+   const dateBtn=document.createElement('button');dateBtn.type='button';dateBtn.className='dateDisplay';
+   const dateText=document.createElement('span');dateText.id='recordEditDateText';dateText.textContent=formatWeightDate(r.date);
+   const dateIcon=document.createElementNS('http://www.w3.org/2000/svg','svg');dateIcon.setAttribute('viewBox','0 0 24 24');dateIcon.setAttribute('aria-hidden','true');
+   dateIcon.innerHTML='<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17"/>';
+   dateBtn.append(dateText,dateIcon);dateWrap.append(dateTitle,date,dateBtn);front.append(dateWrap);
+   dateBtn.onclick=()=>openDatePicker('recordEditDate');
+   const type=makeField('训练项目',document.createElement('select'));recordOptionList(type,r.trainingId,r.name);
+   const weight=makeField('重量（kg）',document.createElement('input'));weight.type='number';weight.step='any';weight.min='0';weight.value=r.weight===null?'':String(r.weight);weight.placeholder='自重';
+   const reps=makeField('次数',document.createElement('input'));reps.type='number';reps.step='1';reps.min='1';reps.value=String(r.reps);
+   let finished=false;
+   const finish=(save=true)=>{
+    if(finished)return;
+    if(!save){finished=true;if(!document.getElementById('dateDialog').hidden)closeDatePicker();renderRecords();return}
+    const wr=weight.value.trim().replace(',','.'),n=Number(reps.value),w=wr===''?null:roundWeight(wr);
+    if(!validRecordDate(date.value)||!type.value||!Number.isInteger(n)||n<1||n>100000||(wr!==''&&(!Number.isFinite(Number(wr))||Number(wr)<0||Number(wr)>500))){alert('请检查日期、重量和次数是否有效');return}
+    const name=type.selectedOptions[0].textContent;
+    const updated={...workoutRecords,[id]:{date:date.value,name,trainingId:type.value,weight:w,reps:n}};
+    if(!saveWorkoutRecords(updated))return;
+    finished=true;renderRecords();
+   };
+   front.addEventListener('focusout',e=>{setTimeout(()=>{if(!finished&&row.isConnected&&document.getElementById('dateDialog').hidden&&!row.contains(document.activeElement))finish()},0)});
+   front.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();finish(false)}if(e.key==='Enter'){e.preventDefault();finish()}});
+   // Tapping outside, even another non-focusable card, saves changes.
+   const outside=e=>{if(finished||!row.isConnected){document.removeEventListener('pointerdown',outside,true);return}if(!row.contains(e.target)&&!e.target.closest('#dateDialog')){finish();document.removeEventListener('pointerdown',outside,true)}};
+   document.addEventListener('pointerdown',outside,true);
+   // 不自动聚焦 select，避免 iPhone 长按后自动弹出原生选项菜单。
+  };
+  front.addEventListener('pointerdown',e=>{if(editing||e.button!==0)return;started={id:e.pointerId,x:e.clientX,y:e.clientY,open:row.classList.contains('open')?60:0};swiping=false;clearPress();press=setTimeout(()=>{if(started&&!swiping)beginEdit()},550)});
+  front.addEventListener('pointermove',e=>{if(!started||e.pointerId!==started.id)return;const dx=e.clientX-started.x,dy=e.clientY-started.y;if(Math.abs(dx)>7||Math.abs(dy)>7)clearPress();if(Math.abs(dx)>10&&Math.abs(dx)>Math.abs(dy)*1.2)swiping=true;if(swiping){row.classList.add('tracking');row.style.setProperty('--record-reveal',Math.min(60,Math.max(0,started.open-dx))+'px')}});
+  const finishSwipe=e=>{if(!started||e.pointerId!==started.id)return;clearPress();if(swiping){const distance=started.open-(e.clientX-started.x);row.classList.remove('tracking');row.style.removeProperty('--record-reveal');row.classList.toggle('open',distance>30);if(row.classList.contains('open'))for(const other of root.querySelectorAll('.recordRow.open'))if(other!==row)other.classList.remove('open')}started=null;swiping=false};
+  front.addEventListener('pointerup',finishSwipe);front.addEventListener('pointercancel',()=>{clearPress();started=null;swiping=false;row.classList.remove('tracking');row.style.removeProperty('--record-reveal')});
+  front.addEventListener('contextmenu',e=>e.preventDefault());
+  let lastTouch=0;
+  const askDelete=()=>{if(confirm('确定删除 '+r.date.replaceAll('-','/')+' 的「'+r.name+'」训练记录吗？')){const next={...workoutRecords};delete next[id];if(saveWorkoutRecords(next))renderRecords()}};
+  del.addEventListener('pointerup',e=>{if(e.pointerType==='touch'||e.pointerType==='pen'){e.preventDefault();e.stopPropagation();lastTouch=Date.now();askDelete()}});
+  del.addEventListener('click',e=>{e.stopPropagation();if(Date.now()-lastTouch>700)askDelete()});
+ }
+}
+document.addEventListener('click',e=>{if(e.target.closest('.recordRow'))return;for(const row of document.querySelectorAll('.recordRow.open'))row.classList.remove('open')});
+refreshRecordOptions();renderRecords();
+
+function selectPage(name){
+ for(const [page,tab] of [['calendar','Calendar'],['weight','Weight'],['record','Record']]){
+  document.getElementById(page==='calendar'?'calendarPage':page+'Page').hidden=page!==name;
+  const button=document.getElementById('tab'+tab);button.classList.toggle('active',page===name);
+  if(page===name)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current');
+ }
+ document.getElementById('todayBtn').hidden=name!=='calendar';closeMenu();window.scrollTo(0,0);
+ if(name==='weight')renderWeights();if(name==='record'){refreshRecordOptions();renderRecords()}
+}
+document.getElementById('tabCalendar').onclick=()=>selectPage('calendar');document.getElementById('tabWeight').onclick=()=>selectPage('weight');document.getElementById('tabRecord').onclick=()=>selectPage('record');
 renderWeights();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(entries));}catch(e){alert('无法保存数据。请检查是否在隐私模式或文件预览中打开，建议使用 GitHub Pages 网页。')}notifyChange('entries')}
 
@@ -1408,8 +1617,8 @@ el('todayBtn').onclick=()=>{
  const diff=(today.getFullYear()-year)*12+(today.getMonth()-month);
  navigateMainCalendar(today.getFullYear(),today.getMonth(),Math.sign(diff)||1);
 };
-el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,theme,viewMode,trainingOrder,hiddenTraining,trainingIds},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');if(data.trainingIds&&typeof data.trainingIds==='object'){trainingIds={...trainingIds,...cleanTrainingIds(data.trainingIds)};saveTrainingIds()}let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}for(const t of trainingOrder)idForTraining(t);saveTrainingIds(true);if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
+el('export').onclick=()=>{closeMenu();let blob=new Blob([JSON.stringify({version:1,entries,weights,workoutRecords,theme,viewMode,trainingOrder,hiddenTraining,trainingIds},null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='健身日历备份.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+el('import').onclick=()=>{closeMenu();el('file').click()};el('file').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{let data=JSON.parse(await f.text());if(data.version!==1||!data.entries||typeof data.entries!=='object'||Array.isArray(data.entries))throw Error('格式不正确');if(data.trainingIds&&typeof data.trainingIds==='object'){trainingIds={...trainingIds,...cleanTrainingIds(data.trainingIds)};saveTrainingIds()}let cleaned={};for(let [id,v]of Object.entries(data.entries)){if(/^\d{4}-\d{2}-\d{2}$/.test(id)){const item=normalEntry(v);if(item)cleaned[id]=item}}if(!confirm(`确定导入 ${Object.keys(cleaned).length} 天记录吗？这会覆盖当前记录。`))return;entries=cleaned;save();if(data.weights&&typeof data.weights==='object'){weights=cleanWeights(data.weights);saveWeights();renderWeights()}if(data.workoutRecords&&typeof data.workoutRecords==='object'){const imported=cleanWorkoutRecords(data.workoutRecords);if(saveWorkoutRecords(imported))renderRecords()}if(data.theme&&typeof data.theme==='object')setTheme(data.theme);if(Array.isArray(data.trainingOrder)){trainingOrder=cleanOrder(data.trainingOrder);saveOrder()}if(Array.isArray(data.hiddenTraining)){hiddenTraining=data.hiddenTraining.filter(t=>validType(t));saveHidden()}for(const t of trainingOrder)idForTraining(t);saveTrainingIds(true);if(data.viewMode==='month'||data.viewMode==='list'){viewMode=data.viewMode;try{localStorage.setItem(VIEW_KEY,viewMode)}catch(e){}notifyChange('view')}render();alert('导入成功')}catch(err){alert('导入失败：'+err.message)}finally{e.target.value=''}});
 render();
 </script>
 <script type="module">
@@ -1432,10 +1641,10 @@ const uidKey='fitness-calendar-cloud-uid-v7';
 let auth,db,user=null,unsub=null,processing=false,ready=false,timer=null;
 let pending=readPending();
 const isDate=k=>/^\d{4}-\d{2}-\d{2}$/.test(k);
-function readPending(){const empty=()=>({dates:{},weights:{},theme:false,view:false,order:false});try{const x=JSON.parse(localStorage.getItem(pendingKey)||'null');if(!x||typeof x!=='object'||Array.isArray(x))return empty();return {dates:x.dates&&typeof x.dates==='object'&&!Array.isArray(x.dates)?x.dates:{},weights:x.weights&&typeof x.weights==='object'&&!Array.isArray(x.weights)?x.weights:{},theme:!!x.theme,view:!!x.view,order:!!x.order}}catch{return empty()}}
+function readPending(){const empty=()=>({dates:{},weights:{},records:{},theme:false,view:false,order:false});try{const x=JSON.parse(localStorage.getItem(pendingKey)||'null');if(!x||typeof x!=='object'||Array.isArray(x))return empty();return {dates:x.dates&&typeof x.dates==='object'&&!Array.isArray(x.dates)?x.dates:{},weights:x.weights&&typeof x.weights==='object'&&!Array.isArray(x.weights)?x.weights:{},records:x.records&&typeof x.records==='object'&&!Array.isArray(x.records)?x.records:{},theme:!!x.theme,view:!!x.view,order:!!x.order}}catch{return empty()}}
 function storePending(){localStorage.setItem(pendingKey,JSON.stringify(pending))}
 const copy=obj=>JSON.parse(JSON.stringify(obj));
-let baseline=copy(entries);let weightBaseline=copy(weights);
+let baseline=copy(entries);let weightBaseline=copy(weights);let recordBaseline=copy(workoutRecords);
 function display(message,stamp=false){status.textContent=message;if(stamp)time.textContent='最近成功同步：'+new Date().toLocaleString('zh-CN')}
 function setCloudUI(logged){$('loginBtn').hidden=logged;$('logoutBtn').hidden=!logged;$('syncBtn').hidden=!logged}
 function markChanges(kind){
@@ -1448,6 +1657,10 @@ function markChanges(kind){
   const keys=new Set([...Object.keys(weightBaseline),...Object.keys(weights)]);
   for(const k of keys){if(!isDate(k))continue;if(weightBaseline[k]!==weights[k])pending.weights[k]=weights[k]??null}
   weightBaseline=copy(weights);
+ }else if(kind==='records'){
+  const keys=new Set([...Object.keys(recordBaseline),...Object.keys(workoutRecords)]);
+  for(const k of keys){if(JSON.stringify(recordBaseline[k])!==JSON.stringify(workoutRecords[k]))pending.records[k]=workoutRecords[k]?copy(workoutRecords[k]):null}
+  recordBaseline=copy(workoutRecords);
  }else if(kind==='theme')pending.theme=true;
  else if(kind==='view')pending.view=true;
  else if(kind==='order')pending.order=true;
@@ -1465,6 +1678,9 @@ function applyRemote(remote){
  const remoteWeights=cleanWeights(remote.weights),mergedWeights={...remoteWeights};
  for(const [k,v] of Object.entries(pending.weights))if(isDate(k)){if(v===null)delete mergedWeights[k];else if(validWeight(v))mergedWeights[k]=v}
  weights=mergedWeights;weightBaseline=copy(mergedWeights);localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));renderWeights();
+ const remoteRecords=cleanWorkoutRecords(remote.workoutRecords);const mergedRecords={...remoteRecords};
+ for(const [k,v] of Object.entries(pending.records))if(/^r-[\w-]{3,110}$/.test(k)){if(v===null)delete mergedRecords[k];else {const valid=cleanWorkoutRecords({[k]:v});if(valid[k])mergedRecords[k]=valid[k]}}
+ workoutRecords=mergedRecords;recordBaseline=copy(mergedRecords);localStorage.setItem(RECORDS_KEY,JSON.stringify(workoutRecords));renderRecords();
  if(!pending.theme&&remote.theme){theme={...DEFAULT_THEME,...cleanTheme(remote.theme)};applyTheme();localStorage.setItem(THEME_KEY,JSON.stringify(theme))}
  if(!pending.order&&Array.isArray(remote.trainingOrder)){trainingOrder=cleanOrder(remote.trainingOrder);localStorage.setItem(ORDER_KEY,JSON.stringify(trainingOrder))}
  if(!pending.order&&Array.isArray(remote.hiddenTraining)){hiddenTraining=remote.hiddenTraining.filter(t=>validType(t));localStorage.setItem(HIDDEN_KEY,JSON.stringify(hiddenTraining))}
@@ -1485,8 +1701,8 @@ async function sync(){
  try{
   const ref=doc(db,'users',currentUser);
   const firstSync=!localStorage.getItem('fitness-calendar-initial-'+currentUser);
-  const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||Object.keys(patch.weights).length||firstSync;
-  const local=copy(entries);const localWeights=copy(weights);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);const currentTrainingIds=copy(trainingIds);
+  const hasPatch=Object.keys(patch.dates).length||patch.theme||patch.view||patch.order||Object.keys(patch.weights).length||Object.keys(patch.records).length||firstSync;
+  const local=copy(entries);const localWeights=copy(weights);const localRecords=copy(workoutRecords);const currentTheme=copy(theme);const currentView=viewMode;const currentOrder=copy(trainingOrder);const currentHidden=copy(hiddenTraining);const currentTrainingIds=copy(trainingIds);
   let latest;
   if(hasPatch){
    latest=await runTransaction(db,async tx=>{
@@ -1500,12 +1716,17 @@ async function sync(){
      if(!snap.exists())Object.assign(mergedWeights,cleanWeights(localWeights));
      else if(firstSync){for(const [k,v] of Object.entries(cleanWeights(localWeights)))if(!(k in mergedWeights))mergedWeights[k]=v}
      for(const [k,v] of Object.entries(patch.weights))if(isDate(k)){if(v===null)delete mergedWeights[k];else if(validWeight(v))mergedWeights[k]=Number(v)}
-     const result={entries:merged,weights:mergedWeights,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],trainingIds:patch.order||!snap.exists()?currentTrainingIds:remote.trainingIds||currentTrainingIds,updatedAt:Date.now()};
+     const mergedRecords={...cleanWorkoutRecords(remote.workoutRecords)};
+     if(!snap.exists())Object.assign(mergedRecords,cleanWorkoutRecords(localRecords));
+     else if(firstSync){for(const [k,v] of Object.entries(cleanWorkoutRecords(localRecords)))if(!(k in mergedRecords))mergedRecords[k]=v}
+     for(const [k,v] of Object.entries(patch.records))if(/^r-[\w-]{3,110}$/.test(k)){if(v===null)delete mergedRecords[k];else {const valid=cleanWorkoutRecords({[k]:v});if(valid[k])mergedRecords[k]=valid[k]}}
+     const result={entries:merged,weights:mergedWeights,workoutRecords:mergedRecords,theme:patch.theme||!snap.exists()?currentTheme:remote.theme||currentTheme,viewMode:patch.view||!snap.exists()?currentView:remote.viewMode||currentView,trainingOrder:patch.order||!snap.exists()?currentOrder:remote.trainingOrder||currentOrder,hiddenTraining:patch.order||!snap.exists()?currentHidden:remote.hiddenTraining||[],trainingIds:patch.order||!snap.exists()?currentTrainingIds:remote.trainingIds||currentTrainingIds,updatedAt:Date.now()};
     tx.set(ref,result);return result;
    });
    // Never discard changes created during the asynchronous upload.
    for(const [k,v] of Object.entries(patch.dates))if(JSON.stringify(pending.dates[k])===JSON.stringify(v))delete pending.dates[k];
     for(const [k,v] of Object.entries(patch.weights))if(JSON.stringify(pending.weights[k])===JSON.stringify(v))delete pending.weights[k];
+    for(const [k,v] of Object.entries(patch.records))if(JSON.stringify(pending.records[k])===JSON.stringify(v))delete pending.records[k];
    if(patch.theme&&JSON.stringify(theme)===JSON.stringify(currentTheme))pending.theme=false;
    if(patch.view&&viewMode===currentView)pending.view=false;
    if(patch.order&&JSON.stringify(trainingOrder)===JSON.stringify(currentOrder)&&JSON.stringify(hiddenTraining)===JSON.stringify(currentHidden)&&JSON.stringify(trainingIds)===JSON.stringify(currentTrainingIds))pending.order=false;
@@ -1513,13 +1734,13 @@ async function sync(){
   }else{
    const snap=await getDoc(ref);
    if(!snap.exists()){
-    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,trainingIds:currentTrainingIds,updatedAt:Date.now()};tx.set(ref,result);return result});
+    latest=await runTransaction(db,async tx=>{const fresh=await tx.get(ref);if(fresh.exists())return fresh.data();const result={entries:cleanEntries(local),weights:cleanWeights(localWeights),workoutRecords:cleanWorkoutRecords(localRecords),theme:currentTheme,viewMode:currentView,trainingOrder:currentOrder,hiddenTraining:currentHidden,trainingIds:currentTrainingIds,updatedAt:Date.now()};tx.set(ref,result);return result});
    }else latest=snap.data();
   }
   if(user?.uid!==currentUser)return;
   localStorage.setItem('fitness-calendar-initial-'+currentUser,'1');
   applyRemote(latest);display('🟢 已同步 · '+(user.displayName||user.email||'Google 账号'),true);
-  if(Object.keys(pending.dates).length||Object.keys(pending.weights).length||pending.theme||pending.view||pending.order)schedule();
+  if(Object.keys(pending.dates).length||Object.keys(pending.weights).length||Object.keys(pending.records).length||pending.theme||pending.view||pending.order)schedule();
  }catch(err){console.error('云端同步失败',err);display('🟠 同步未完成：'+(err.code||err.message)+' · 本地记录已保留')}
  finally{processing=false}
 }
@@ -1534,9 +1755,9 @@ async function initialize(){
    const pastUser=localStorage.getItem(uidKey);
    if(pastUser&&pastUser!==user.uid){
     // Never automatically upload another account's local data.
-    pending={dates:{},weights:{},theme:false,view:false,order:false};storePending();
+    pending={dates:{},weights:{},records:{},theme:false,view:false,order:false};storePending();
     if(!confirm('检测到不同的 Google 账号。是否将本机记录保留并仅在本机查看？取消则先从新账号读取云端记录。')){
-     entries={};baseline={};localStorage.setItem(KEY,'{}');weights={};weightBaseline={};localStorage.setItem(WEIGHT_KEY,'{}');renderWeights();render();
+     entries={};baseline={};localStorage.setItem(KEY,'{}');weights={};weightBaseline={};localStorage.setItem(WEIGHT_KEY,'{}');workoutRecords={};recordBaseline={};localStorage.setItem(RECORDS_KEY,'{}');renderRecords();renderWeights();render();
     }else{await signOut(auth);alert('请使用原 Google 账号登录，避免混用不同账号的记录。');return}
    }
    localStorage.setItem(uidKey,user.uid);
