@@ -332,6 +332,28 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
 .recordEmpty{color:var(--muted);text-align:center;padding:20px 0;font-size:13px}
 @media(max-width:460px){.recordCard{padding:15px}.recordRowFront{padding:11px 9px}.recordRowName{font-size:12px}.recordRowMetrics{font-size:11px}}
 
+/* v100: compact month-view workout chips; no enclosing orange selection outline. */
+@media(max-width:600px){
+ #calendarPage .calendar:not(.listMode) .pick.selected:not(.workoutTint):not(.multiSelected){border-color:var(--border);color:var(--pickText);}
+ #calendarPage .calendar:not(.listMode) .pick.multiSelected.compactWorkoutLines{
+  padding:0;border:0!important;background:transparent!important;color:var(--pickText)!important;
+  min-height:0;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:2px;
+  font-size:9px;line-height:1.23;white-space:normal;
+ }
+ #calendarPage .calendar:not(.listMode) .pick.multiSelected.compactWorkoutLines .workoutLine{
+  box-sizing:border-box;width:100%;min-width:0;padding:3px 0px;border-radius:5px;
+  border:1px solid var(--border);background:var(--pickbg);color:var(--pickText);
+  font-size:9px;line-height:1.23;overflow-wrap:anywhere;word-break:break-word;
+ }
+ #calendarPage .calendar:not(.listMode) .pick.multiSelected.compactWorkoutLines .workoutLine.tintedLine{
+  background:var(--line-bg);color:var(--line-fg);border-color:var(--line-border);padding:3px 0;
+ }
+ #calendarPage .calendar:not(.listMode) .pick:not(.multiSelected){font-size:9px;padding-left:1px;padding-right:1px;line-height:1.25;}
+}
+@media(max-width:365px){
+ #calendarPage .calendar:not(.listMode) .pick.multiSelected.compactWorkoutLines .workoutLine,
+ #calendarPage .calendar:not(.listMode) .pick:not(.multiSelected){font-size:8.5px;}
+}
 /* v99: custom workout project colors. Uncolored projects inherit the theme. */
 .workoutTint{background:var(--workout-bg)!important;color:var(--workout-fg)!important;border-color:var(--workout-border)!important}
 .pick.workoutTint{border-style:solid!important}
@@ -1253,8 +1275,8 @@ function render(){
   const pick=document.createElement('button');pick.type='button';const restOnly=types.length===1&&types[0]==='休息';pick.className=selected?(restOnly?'pick restDay':'pick selected'):'pick';if(types.length>1)pick.classList.add('multiSelected');pick.textContent=selected?types.join('\n'):'＋ 选择';pick.setAttribute('aria-label',`${id} 选择训练：${types.join('、')||'未选择'}`);pick.addEventListener('click',()=>showPicker(id));
   if(selected){
    if(types.length===1){setWorkoutTint(pick,colorForTraining(types[0]));}
-   else if(types.some(t=>colorForTraining(t))){
-    pick.textContent='';pick.classList.add('hasWorkoutTints');
+   else if(types.length>1){
+    pick.textContent='';pick.classList.add('hasWorkoutTints','compactWorkoutLines');
     for(const t of types){
      const item=document.createElement('span');item.className='workoutLine';item.textContent=t;
      const tint=colorForTraining(t);
