@@ -375,7 +375,9 @@ body.trainingPickerLocked{overflow:hidden!important;overscroll-behavior:none}
 .workoutColorDot{width:27px;height:27px;border-radius:50%;background:var(--swatch-fg);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1}
 
 /* v104: stable column hit testing uses layout positions, never animated transforms. */
-#panel .trainingScroll{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(54px,auto);column-gap:8px;row-gap:6px;align-content:start}
+/* v108: row-major grid. Show up to eight 54px rows; scroll to see more. */
+#panel .trainingScroll{position:relative;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(54px,54px);column-gap:8px;row-gap:6px;align-content:start;max-height:474px}
+#panel .sheet{height:min(690px,calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)))}
 #panel .trainingScroll .swipeRow{min-width:0;min-height:54px;height:100%;margin:0;border-radius:12px}
 #panel .trainingScroll .swipeRow .swipeFront{min-height:54px;padding:5px 3px;font-size:13px;line-height:1.25;overflow-wrap:anywhere;word-break:break-word}
 #panel .trainingScroll .swipeRow.revealed,#panel .trainingScroll .swipeRow.confirming{--swipe-reveal:var(--training-reveal,105px)}
@@ -1409,14 +1411,13 @@ function renderPicker(){
  const fromHistory=Object.values(entries).flatMap(entryTypes).filter(x=>!TYPES.includes(x));
  for(const t of fromHistory)if(!trainingOrder.includes(t))trainingOrder.push(t);
  const ordered=orderedTypes();
- // The visual order is column-major: 1-8 on the left, 9-16 on the right.
- // Further projects continue in another 8-row block below the first 16.
+ // v108: Native row-major grid: 1 left, 2 right, 3 left, 4 right, ...
+ // No columns of eight and no pagination. Extra rows scroll naturally.
  const placeTrainingGrid=()=>{
-  const nodes=[...options.children].filter(node=>(node.classList.contains('swipeRow')&&!node.classList.contains('dragSource'))||node.classList.contains('dragPlaceholder'));
-  nodes.forEach((node,index)=>{
-   node.style.gridColumn=String(Math.floor((index%16)/8)+1);
-   node.style.gridRow=String(Math.floor(index/16)*8+(index%8)+1);
-  });
+  for(const node of options.children){
+   node.style.removeProperty('grid-column');
+   node.style.removeProperty('grid-row');
+  }
  };
  for(const type of ordered){
   const row=document.createElement('div');row.className='swipeRow';row.dataset.type=type;
@@ -1555,121 +1556,90 @@ function renderPicker(){
   let suppressMoveClickUntil=0;
   // 轻点三横线选择颜色，上下拖动仍用原先的 FLIP 排序逻辑。
   move.onclick=()=>{if(performance.now()<suppressMoveClickUntil)return;showWorkoutColor(type)};
-  // 按住移动手柄时，让浮动卡片跟手移动，并通过 FLIP 动画把其他项目挤开。
+  // v108: Single continuous row-major order, with fixed hit-test slots.
+  // No column-specific reorder or swaps. The placeholder occupies exactly
+  // one grid cell; all other cells flow into their new positions.
   let drag=null;
-  // Keep the visual grid stable while dragging. Column 1 contains indices
-  // 0..7, 16..23, ...; column 2 contains 8..15, 24..31, ... .
-  const gridColumnForIndex=index=>Math.floor((index%16)/8)+1;
-  const dragCandidates=()=>[...options.children].filter(node=>node.classList.contains('swipeRow')&&!node.classList.contains('dragSource'));
-  const resetDragPreview=()=>{
-    for(const node of dragCandidates()){
-      node.classList.remove('crossSwapTarget');
-      node.style.removeProperty('transform');
-      node.style.removeProperty('transition');
-    }
-  };
-  // Read stationary grid slots once when the drag starts. Animated items must
-  // never be used as hit-test targets; otherwise the preview oscillates.
-  const reorderPlaceholder=(clientX,clientY)=>{
-    if(!drag?.started)return;
-    const rect=options.getBoundingClientRect();
-    const dx=clientX-drag.startX;
-    const movedCenter=drag.left+drag.width/2+dx;
-    const midX=rect.left+rect.width/2;
-    const crossed=Math.abs(dx)>=Math.max(58,rect.width*.16)
-      &&(drag.startColumn===1?movedCenter>midX+10:movedCenter<midX-10);
-    const column=crossed?(drag.startColumn===1?2:1):drag.startColumn;
-    const scrollShift=options.scrollTop-drag.baseScrollTop;
-    let nearest=null,distance=Infinity;
-    for(const item of drag.stableSlots){
-      if(item.column!==column)continue;
-      const delta=Math.abs(clientY-(item.centerY-scrollShift));
-      if(delta<distance){distance=delta;nearest=item;}
-    }
-    if(!nearest)return;
-    const nextTarget=nearest.type;
-    // Do not reset transitions on every pointermove. Resetting and restoring
-    // transforms each frame was the source of the rapid dealing-card flicker.
-    if(drag.targetType===nextTarget&&drag.previewColumn===column)return;
-    drag.targetType=nextTarget;
-    drag.previewColumn=column;
-    drag.crossTarget=crossed?nextTarget:null;
-    const sourceRank=drag.sourceRank;
-    const targetRank=nearest.rank;
-    for(const item of drag.stableSlots){
-      const node=item.node;
-      node.classList.toggle('crossSwapTarget',crossed&&item.type===nextTarget);
-      let translate=0;
-      if(!crossed&&item.column===drag.startColumn){
-        if(sourceRank<targetRank&&item.rank>sourceRank&&item.rank<=targetRank)translate=-drag.stepY;
-        else if(sourceRank>targetRank&&item.rank>=targetRank&&item.rank<sourceRank)translate=drag.stepY;
-      }
-      // Keep the transition in place across updates, allowing a single
-      // smooth movement to each new target without repeated restarts.
-      node.style.transition='transform 170ms cubic-bezier(.22,1,.36,1)';
-      node.style.transform=translate?`translateY(${translate}px)`:'';
-    }
-  };
+  const dragCards=()=>[...options.children].filter(n=>n.classList.contains('swipeRow')&&!n.classList.contains('dragSource'));
   const startDrag=()=>{
     if(!drag||drag.started)return;
     drag.started=true;
+    const original=[...options.querySelectorAll('.swipeRow')];
+    const index=original.indexOf(row);
+    if(index<0)return;
     const rect=row.getBoundingClientRect();
-    const placeholder=document.createElement('div');placeholder.className='dragPlaceholder';placeholder.style.height=rect.height+'px';
-    row.before(placeholder);
-    const ghost=row.cloneNode(true);ghost.classList.add('dragGhost');
-    ghost.style.left=rect.left+'px';ghost.style.top=rect.top+'px';ghost.style.width=rect.width+'px';ghost.style.height=rect.height+'px';
-    document.body.append(ghost);
-    drag.initialNames=orderedTypes();
-    drag.sourcePosition=drag.initialNames.indexOf(type);
-    drag.startColumn=gridColumnForIndex(drag.sourcePosition);
-    row.classList.add('dragSource');
-    placeTrainingGrid();
-    drag.placeholder=placeholder;drag.ghost=ghost;drag.left=rect.left;drag.top=rect.top;
+    drag.originalTypes=original.map(n=>n.dataset.type);
+    drag.originalIndex=index;
+    drag.previewIndex=index;
     drag.width=rect.width;drag.height=rect.height;
-    drag.crossTarget=null;drag.targetType=null;drag.previewColumn=null;
+    drag.left=rect.left;drag.top=rect.top;
     drag.baseScrollTop=options.scrollTop;
-    const slots=dragCandidates();
-    drag.stableSlots=slots.map(node=>{
-      const index=drag.initialNames.indexOf(node.dataset.type);
-      const pos=node.getBoundingClientRect();
-      return {node,type:node.dataset.type,column:gridColumnForIndex(index),
-        rank:drag.initialNames.slice(0,index+1).filter((_,i)=>gridColumnForIndex(i)===gridColumnForIndex(index)).length-1,
-        centerY:pos.top+pos.height/2};
+    // Capture all slots before any changes/animations. The ghost is rendered
+    // outside the grid, so it never influences hit testing.
+    drag.slots=original.map((node,i)=>{
+      const r=node.getBoundingClientRect();
+      return {index:i,cx:r.left+r.width/2,cy:r.top+r.height/2};
     });
-    drag.sourceRank=drag.initialNames.slice(0,drag.sourcePosition+1).filter((_,i)=>gridColumnForIndex(i)===drag.startColumn).length-1;
-    const slotInColumn=drag.stableSlots.filter(s=>s.column===drag.startColumn);
-    const rowHeights=slotInColumn.map(s=>s.node.getBoundingClientRect().height);
-    drag.stepY=(rowHeights.length?Math.max(...rowHeights):54)+6;
+    const placeholder=document.createElement('div');
+    placeholder.className='dragPlaceholder';
+    placeholder.style.height=rect.height+'px';
+    row.before(placeholder);
+    const ghost=row.cloneNode(true);
+    ghost.classList.add('dragGhost');
+    ghost.style.left=rect.left+'px';ghost.style.top=rect.top+'px';
+    ghost.style.width=rect.width+'px';ghost.style.height=rect.height+'px';
+    document.body.append(ghost);
+    row.classList.add('dragSource');
+    drag.placeholder=placeholder;drag.ghost=ghost;
+    drag.remaining=original.filter(n=>n!==row);
+    openedTrainingRow=type;
+  };
+  const movePlaceholder=(clientX,clientY)=>{
+    if(!drag?.started)return;
+    const d=drag;
+    const scrollShift=options.scrollTop-d.baseScrollTop;
+    // Offset from the original card centre, not the handle location. This
+    // keeps vertical dragging within its own column unless moved sideways.
+    const centreX=d.left+d.width/2+(clientX-d.startX);
+    const centreY=d.top+d.height/2+(clientY-d.startY);
+    let best=d.previewIndex,nearest=Infinity;
+    for(const slot of d.slots){
+      const deltaX=centreX-slot.cx;
+      const deltaY=centreY-(slot.cy-scrollShift);
+      const dist=deltaX*deltaX+deltaY*deltaY;
+      if(dist<nearest){nearest=dist;best=slot.index;}
+    }
+    if(best===d.previewIndex)return;
+    d.previewIndex=best;
+    const before=new Map(d.remaining.map(node=>[node,node.getBoundingClientRect()]));
+    const anchor=d.remaining[best]||null;
+    options.insertBefore(d.placeholder,anchor);
+    // Only cards whose logical grid slots changed receive a single FLIP.
+    // Hit testing is based on captured slots above, never animated rectangles.
+    for(const node of d.remaining){
+      const prev=before.get(node),now=node.getBoundingClientRect();
+      const dx=prev.left-now.left,dy=prev.top-now.top;
+      if(Math.abs(dx)<.5&&Math.abs(dy)<.5)continue;
+      node.getAnimations().forEach(a=>a.cancel());
+      node.animate([
+        {transform:`translate(${dx}px,${dy}px)`},
+        {transform:'translate(0px,0px)'}
+      ],{duration:170,easing:'cubic-bezier(.22,1,.36,1)'});
+    }
   };
   const finishDrag=(cancelled=false)=>{
     if(!drag)return;
     const d=drag;drag=null;
     if(!d.started)return;
     suppressMoveClickUntil=performance.now()+500;
-    resetDragPreview();
     d.ghost.remove();d.placeholder.remove();row.classList.remove('dragSource');
-    if(!cancelled&&d.targetType&&d.targetType!==type){
-      const before=d.initialNames;
-      const sourceIndex=d.sourcePosition,targetIndex=before.indexOf(d.targetType);
-      if(sourceIndex>=0&&targetIndex>=0){
-        const newVisible=[...before];
-        if(gridColumnForIndex(targetIndex)!==d.startColumn){
-          // Across columns: exchange precisely two slots.
-          [newVisible[sourceIndex],newVisible[targetIndex]]=[newVisible[targetIndex],newVisible[sourceIndex]];
-        }else{
-          // Within a column: insert only among its own visual slots;
-          // never move any entry of the other column.
-          const slots=before.map((_,i)=>i).filter(i=>gridColumnForIndex(i)===d.startColumn);
-          const items=slots.map(i=>before[i]);
-          const from=slots.indexOf(sourceIndex),to=slots.indexOf(targetIndex);
-          items.splice(to,0,...items.splice(from,1));
-          slots.forEach((pos,i)=>{newVisible[pos]=items[i]});
-        }
-        if(before.join('\u0000')!==newVisible.join('\u0000')){
-          let i=0;trainingOrder=trainingOrder.map(t=>before.includes(t)?newVisible[i++]:t);
-          saveOrder();
-        }
-      }
+    for(const node of d.remaining)node.getAnimations().forEach(a=>a.cancel());
+    if(!cancelled&&d.previewIndex!==d.originalIndex){
+      const arranged=[...d.originalTypes];
+      arranged.splice(d.previewIndex,0,...arranged.splice(d.originalIndex,1));
+      let i=0;
+      trainingOrder=trainingOrder.map(t=>d.originalTypes.includes(t)?arranged[i++]:t);
+      saveOrder();
     }
     openedTrainingRow=type;movingTrainingRow=null;renderPicker();
   };
@@ -1683,14 +1653,14 @@ function renderPicker(){
     const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;
     if(!drag.started&&Math.hypot(dx,dy)>7)startDrag();
     if(!drag.started)return;
+    const r=options.getBoundingClientRect();
     const addTop=addDock.getBoundingClientRect().top;
     const maxTop=addTop-drag.height-8;
-    drag.ghost.style.top=Math.min(drag.top+dy,maxTop)+'px';
-    const panelRect=options.getBoundingClientRect();
-    drag.ghost.style.left=Math.max(panelRect.left,Math.min(drag.left+dx,panelRect.right-drag.width))+'px';
-    reorderPlaceholder(e.clientX,e.clientY);
-    const r=options.getBoundingClientRect();
-    if(e.clientY<r.top+48)options.scrollTop-=10;else if(e.clientY>r.bottom-48)options.scrollTop+=10;
+    drag.ghost.style.top=Math.max(r.top,Math.min(drag.top+dy,maxTop))+'px';
+    drag.ghost.style.left=Math.max(r.left,Math.min(drag.left+dx,r.right-drag.width))+'px';
+    if(e.clientY<r.top+40)options.scrollTop-=9;
+    else if(e.clientY>r.bottom-40)options.scrollTop+=9;
+    movePlaceholder(e.clientX,e.clientY);
     e.preventDefault();
   });
   move.addEventListener('pointerup',e=>{if(drag?.id===e.pointerId)finishDrag(false)});
