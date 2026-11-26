@@ -1375,7 +1375,15 @@ function chooseTraining(type){
  const trainingId=idForTraining(type);
  const items=current.some(item=>item.id===trainingId)?current.filter(item=>item.id!==trainingId):[...current,{id:trainingId,name:type}];
  if(items.length)entries[id]=entryFromItems(items);else delete entries[id];
- save();render();renderPicker();
+ save();render();
+ // Update selection in place, preserving the scroll container and its position.
+ for(const row of el('options').querySelectorAll('.swipeRow[data-type]')){
+  const front=row.querySelector('button.swipeFront');if(!front)continue;
+  const name=row.dataset.type,active=entryHasTraining(entries[id],name);
+  front.classList.toggle('active',active);
+  front.textContent=(active?'✓  ':'')+name;
+  front.setAttribute('aria-pressed',String(active));
+ }
 }
 function moveTraining(type, delta){
  const visible=orderedTypes(), index=visible.indexOf(type),target=visible[index+delta];
