@@ -1385,6 +1385,36 @@ function chooseTraining(type){
   front.setAttribute('aria-pressed',String(active));
  }
 }
+// v110: Cloud sync must not rebuild an open picker just to refresh checkmarks.
+// Rebuilding the scrollable grid after the asynchronous Firebase response
+// resets the user's scroll position on iOS Home Screen web apps.
+function refreshPickerAfterCloudSync(){
+ const panel=el('panel');
+ if(!editing||!panel.classList.contains('show'))return;
+ const options=el('options');
+ const visible=orderedTypes();
+ const existing=[...options.querySelectorAll('.swipeRow[data-type]')];
+ const sameOrder=existing.length===visible.length&&existing.every((row,i)=>row.dataset.type===visible[i]);
+ if(!sameOrder){
+  const savedTop=options.scrollTop;
+  renderPicker();
+  options.scrollTop=savedTop;
+  // An iOS frame/layout pass can otherwise reset scroll after replacing children.
+  requestAnimationFrame(()=>{if(editing&&panel.classList.contains('show'))options.scrollTop=savedTop});
+  return;
+ }
+ // Selection, label and tint can all be updated without modifying the grid.
+ for(const row of existing){
+  const front=row.querySelector('button.swipeFront');
+  if(!front)continue; // Leave inline editing intact.
+  const name=row.dataset.type;
+  const active=entryHasTraining(entries[editing],name);
+  front.classList.toggle('active',active);
+  front.textContent=(active?'✓  ':'')+name;
+  front.setAttribute('aria-pressed',String(active));
+  setWorkoutTint(front,colorForTraining(name));
+ }
+}
 function moveTraining(type, delta){
  const visible=orderedTypes(), index=visible.indexOf(type),target=visible[index+delta];
  if(!target)return;
@@ -1845,7 +1875,7 @@ function readPending(){const empty=()=>({dates:{},weights:{},records:{},theme:fa
 function storePending(){localStorage.setItem(pendingKey,JSON.stringify(pending))}
 const copy=obj=>JSON.parse(JSON.stringify(obj));
 let baseline=copy(entries);let weightBaseline=copy(weights);let recordBaseline=copy(workoutRecords);
-const APP_VERSION='v109'; // 每次发布新版本时更新这里
+const APP_VERSION='v110'; // 每次发布新版本时更新这里
 function display(message,stamp=false){status.textContent=message;if(stamp)time.textContent='最近成功同步：'+new Date().toLocaleString('zh-CN')+' · '+APP_VERSION}
 function setCloudUI(logged){$('loginBtn').hidden=logged;$('logoutBtn').hidden=!logged;$('syncBtn').hidden=!logged}
 function markChanges(kind){
@@ -1893,7 +1923,7 @@ function applyRemote(remote){
  }
  if(!pending.order){workoutColors=cleanWorkoutColors(remote.workoutColors);localStorage.setItem(WORKOUT_COLORS_KEY,JSON.stringify(workoutColors))}
  if(!pending.view&&(remote.viewMode==='month'||remote.viewMode==='list')){viewMode=remote.viewMode;localStorage.setItem(VIEW_KEY,viewMode)}
- render();if(document.getElementById('panel').classList.contains('show'))renderPicker();
+ render();refreshPickerAfterCloudSync();
 }
 async function sync(){
  if(!user||!ready||processing||!navigator.onLine)return;
