@@ -1845,7 +1845,8 @@ function readPending(){const empty=()=>({dates:{},weights:{},records:{},theme:fa
 function storePending(){localStorage.setItem(pendingKey,JSON.stringify(pending))}
 const copy=obj=>JSON.parse(JSON.stringify(obj));
 let baseline=copy(entries);let weightBaseline=copy(weights);let recordBaseline=copy(workoutRecords);
-function display(message,stamp=false){status.textContent=message;if(stamp)time.textContent='最近成功同步：'+new Date().toLocaleString('zh-CN')}
+const APP_VERSION='v109'; // 每次发布新版本时更新这里
+function display(message,stamp=false){status.textContent=message;if(stamp)time.textContent='最近成功同步：'+new Date().toLocaleString('zh-CN')+' · '+APP_VERSION}
 function setCloudUI(logged){$('loginBtn').hidden=logged;$('logoutBtn').hidden=!logged;$('syncBtn').hidden=!logged}
 function markChanges(kind){
  if(kind==='entries'){
